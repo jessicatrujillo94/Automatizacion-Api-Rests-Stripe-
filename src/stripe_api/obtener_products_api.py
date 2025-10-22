@@ -87,7 +87,7 @@ def obtener_productos_validar_estructura():
 
 def obtener_producto(product_id):
     headers = build_headers()
-    endpoint = ProductEndpoints.GET_PRODUCT_BY_ID.format(product_id=product_id)
+    endpoint = ProductEndpoints.GET_PRODUCT_BY_ID.value.format(product_id=product_id)
     response = StripeAPI(BASE_URL).get(endpoint=endpoint, headers=headers)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, response=response)
     return response

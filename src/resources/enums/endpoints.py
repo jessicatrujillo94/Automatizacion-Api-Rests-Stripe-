@@ -13,3 +13,10 @@ class CustomerEndpoints(Enum):
     CREATE_CUSTOMER = "/customers"
     UPDATE_CUSTOMER = "/customers/{customer_id}"
     DELETE_CUSTOMER = "/customers/{customer_id}"
+
+class PriceEndpoints(Enum):
+    GET_PRICES = "/prices"
+    GET_PRICE_BY_ID = "/prices/{price_id}"
+    CREATE_PRICE = "/prices"
+    UPDATE_PRICE = "/prices/{price_id}"
+    DELETE_PRICE = "/prices/{price_id}"
