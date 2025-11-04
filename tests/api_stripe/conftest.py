@@ -1,38 +1,12 @@
 import pytest
 import os
 import time
-import requests
-""" 
-from src.stripe_api.crear_tarea_api import crear_tarea, eliminar_tarea, crear_lista_para_crear_tarea, \
-    eliminar_lista_de_la_tarea_creada
-
-
-from src.stripe_api.eliminar_tarea import crear_lista_para_tarea, crear_tarea_en_lista, eliminar_lista_tarea
-from src.logs.conflogger import log_request_response
-
-from src.stripe_api.obtener_folder import crear_folder, eliminar_folder
-import uuid
-from src.stripe_api.tags import crear_tag, eliminar_tag
-
-from src.stripe_api.editar_folder import crear_folder, eliminar_folder
-from src.stripe_api.grupo import (eliminar_grupo,crear_grupo)
- """
-from src.logs.logger import logger
 from dotenv import load_dotenv
-from src.logs.conflogger  import log_request_response
-from src.stripe_api.crear_products_api import crear_producto_campos_minimos, eliminar_producto
-
-""" 
-from src.stripe_api.crear_lista import (
-    crear_lista as crear_lista_default,
-    crear_lista_no_token,
-    crear_lista_token_invalido,
-    eliminar_lista
-) """
-from src.resources.enums.endpoints import (ProductEndpoints)
+from src.stripe_api.crear_products_api import crear_producto_campos_minimos, crear_producto_inactivo, eliminar_producto
+from src.stripe_api.obtener_products_api import obtener_lista_completa_productos, obtener_productos_inactivos
+from src.stripe_api.crear_prices_api import crear_price_campos_minimos
+from src.stripe_api.crear_coupons_api import crear_cupon_valido, eliminar_cupon
 from src.stripe_api.stripe_api import StripeAPI
-""" from src.payloads.payload_grupo import payload_grupo
-from src.payloads.crear_payload_tag import payload_tag """
 load_dotenv()
 
 BASE_URL = os.getenv("BASE_URL")
@@ -48,6 +22,61 @@ def producto_creado():
     response = crear_producto_campos_minimos()
     yield response
     eliminar_producto(response)
+
+@pytest.fixture
+def one_product_id():
+    response = obtener_lista_completa_productos()  
+    products = response.json().get("data", []) 
+    if len(products) > 0:
+        product = products[0]
+        yield product.get("id")
+    else:
+        # Create a new one only if none exist
+        resp = crear_producto_campos_minimos()
+        yield resp.json().get("id")
+        eliminar_producto(resp)   
+
+@pytest.fixture
+def one_product_id_inactive():
+    response = obtener_productos_inactivos()  
+    products = response.json().get("data", []) 
+    if len(products) > 0:
+        product = products[0]
+        yield product.get("id")
+    else:
+        resp = crear_producto_inactivo()
+        yield resp.json().get("id") 
+        eliminar_producto(resp)   
+
+@pytest.fixture    
+def one_price_id():
+    response = obtener_lista_completa_productos()  
+    products = response.json().get("data", []) 
+    product_id = None
+    resp_producto = None
+    if len(products) > 0:
+        product_id = products[0].get("id")
+    else:
+        # Create a new one only if none exist
+        resp_producto = crear_producto_campos_minimos()
+        product_id = resp_producto.json().get("id")
+    
+    resp_price = crear_price_campos_minimos(product_id)
+    yield resp_price.json().get("id")
+    if resp_producto:
+        eliminar_producto(resp_producto)
+
+    
+@pytest.fixture(scope="session")
+def coupon_creado():
+    response = crear_cupon_valido()
+    coupon_id = response.json().get("id")
+
+    yield response
+
+    if coupon_id:
+        eliminar_cupon(response)
+
 @pytest.fixture(scope="session")
 def pausa():
     time.sleep(60)

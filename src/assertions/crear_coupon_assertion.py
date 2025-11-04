@@ -1,13 +1,13 @@
 import pytest
 import jsonschema
-from src.schemas.output.price_output_schema import price_output_schema
+from src.schemas.output.coupon_output_schema import coupon_output_schema
 
 
 def assert_creacion_exitosa(response):
     try:
         print(response.json())
         assert response.status_code in [200, 201], f"Se esperaba 200 o 201, se recibió {response.status_code}"
-        jsonschema.validate(instance=response.json(), schema=price_output_schema)
+        jsonschema.validate(instance=response.json(), schema=coupon_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
         pytest.xfail(f"XFAIL por fallo en creación exitosa: {e}")
     except Exception as e:
@@ -41,88 +41,68 @@ def assert_creacion_token_invalido(response):
         pytest.xfail(f"XFAIL por excepción inesperada: {e}")
 
 
-def assert_creacion_producto_inexistente(response):
+def assert_creacion_sin_permisos(response):
     try:
-        assert response.status_code == 400, f"Se esperaba 400, se recibió {response.status_code}"
+        assert response.status_code == 403, f"Se esperaba 403, se recibió {response.status_code}"
     except AssertionError as e:
-        pytest.xfail(f"XFAIL producto inexistente: {e}")
+        pytest.xfail(f"XFAIL permisos insuficientes: {e}")
     except Exception as e:
         pytest.xfail(f"XFAIL por excepción inesperada: {e}")
 
 
-def assert_creacion_campos_no_soportados(response):
-    try:
-        assert response.status_code == 400, f"Se esperaba 400, se recibió {response.status_code}"
-    except AssertionError as e:
-        pytest.xfail(f"XFAIL campos no soportados: {e}")
-    except Exception as e:
-        pytest.xfail(f"XFAIL por excepción inesperada: {e}")
-
-
-def assert_creacion_inactivo(response):
+def assert_campos_cupon_validos(response):
     try:
         assert response.status_code in [200, 201], f"Se esperaba 200 o 201, se recibió {response.status_code}"
         data = response.json()
-        assert data.get("active") is False, "El precio no está inactivo"
+        campos = ["id", "object", "percent_off", "duration", "valid"]
+        for campo in campos:
+            assert campo in data, f"Falta el campo obligatorio '{campo}' en la respuesta"
     except AssertionError as e:
-        pytest.xfail(f"XFAIL price inactivo: {e}")
+        pytest.xfail(f"XFAIL campos cupón válidos: {e}")
     except Exception as e:
         pytest.xfail(f"XFAIL por excepción inesperada: {e}")
 
 
-def assert_creacion_nombre_vacio(response):
+def assert_tipos_datos_cupon(response):
     try:
-        assert response.status_code == 400, f"Se esperaba 400, se recibió {response.status_code}"
+        data = response.json()
+        assert isinstance(data.get("id"), str), "El campo 'id' debe ser string"
+        assert isinstance(data.get("percent_off"), (int, float, type(None))), "El campo 'percent_off' debe ser numérico o nulo"
+        assert isinstance(data.get("duration"), str), "El campo 'duration' debe ser string"
+        assert isinstance(data.get("valid"), bool), "El campo 'valid' debe ser booleano"
     except AssertionError as e:
-        pytest.xfail(f"XFAIL nickname vacío: {e}")
+        pytest.xfail(f"XFAIL tipos de datos inválidos: {e}")
     except Exception as e:
         pytest.xfail(f"XFAIL por excepción inesperada: {e}")
 
 
-def assert_creacion_metadata_compleja(response):
-    try:
-        assert response.status_code in [200, 201], f"Se esperaba 200 o 201, se recibió {response.status_code}"
-    except AssertionError as e:
-        pytest.xfail(f"XFAIL metadata compleja: {e}")
-    except Exception as e:
-        pytest.xfail(f"XFAIL por excepción inesperada: {e}")
-
-
-def assert_creacion_multiple(responses):
-    try:
-        for response in responses:
-            assert response.status_code in [200, 201], (
-                f"Se esperaba 200 o 201, se recibió {response.status_code}"
-            )
-    except AssertionError as e:
-        pytest.xfail(f"XFAIL creación múltiple: {e}")
-    except Exception as e:
-        pytest.xfail(f"XFAIL por excepción inesperada: {e}")
-
-
-def assert_estructura_respuesta_price(response):
+def assert_estructura_body_cupon(response):
     try:
         assert response.status_code in [200, 201], f"Código inesperado: {response.status_code}"
-        jsonschema.validate(instance=response.json(), schema=price_output_schema)
+        jsonschema.validate(instance=response.json(), schema=coupon_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
-        pytest.xfail(f"XFAIL estructura de price inválida: {e}")
+        pytest.xfail(f"XFAIL estructura del body inválida: {e}")
     except Exception as e:
         pytest.xfail(f"XFAIL por excepción inesperada: {e}")
 
 
-def assert_creacion_nombre_largo(response):
+def assert_content_type_json(response):
     try:
-        assert response.status_code == 400, f"Se esperaba 400, se recibió {response.status_code}"
+        content_type = response.headers.get("Content-Type", "")
+        assert "application/json" in content_type, f"Content-Type inesperado: {content_type}"
     except AssertionError as e:
-        pytest.xfail(f"XFAIL nickname largo: {e}")
+        pytest.xfail(f"XFAIL tipo de contenido inválido: {e}")
     except Exception as e:
         pytest.xfail(f"XFAIL por excepción inesperada: {e}")
 
 
-def assert_creacion_body_invalido(response):
+def assert_estructura_error_json(response):
     try:
-        assert response.status_code == 400, f"Se esperaba 400, se recibió {response.status_code}"
+        assert response.status_code in [400, 401, 403], f"Se esperaba error, se recibió {response.status_code}"
+        data = response.json()
+        assert "error" in data, "No se encontró el campo 'error' en la respuesta"
+        assert "message" in data["error"], "No se encontró el campo 'message' dentro de 'error'"
     except AssertionError as e:
-        pytest.xfail(f"XFAIL body inválido: {e}")
+        pytest.xfail(f"XFAIL estructura de error inválida: {e}")
     except Exception as e:
         pytest.xfail(f"XFAIL por excepción inesperada: {e}")

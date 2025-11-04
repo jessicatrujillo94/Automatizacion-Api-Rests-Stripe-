@@ -6,7 +6,7 @@ def log_request_response(url, headers=None, payload=None, response=None):
     - Headers, payload y response body se loguean como DEBUG.
     """
     logger.info(f"URL solicitada: {url}")
-
+    print(response)
     if response is not None:
         logger.info(f"HTTP method: {response.request.method}")
         logger.info(f"Status code: {response.status_code}")

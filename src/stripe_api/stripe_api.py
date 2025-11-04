@@ -6,9 +6,9 @@ class StripeAPI:
         self.base_url = base_url.rstrip("/") if base_url else ""
         self.headers = headers or {}
 
-    def get(self, endpoint, headers=None):
+    def get(self, endpoint,  headers=None,params={}):
         url = f"{self.base_url}{endpoint}"
-        return requests.get(url, headers=headers or self.headers)
+        return requests.get(url, params=params, headers=headers or self.headers)
 
     def post(self, endpoint, payload=None, headers=None):
         url = f"{self.base_url}{endpoint}"
