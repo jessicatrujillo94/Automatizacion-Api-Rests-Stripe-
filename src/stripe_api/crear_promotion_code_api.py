@@ -7,16 +7,32 @@ import time
 
 BASE_URL = os.getenv("BASE_URL")
 API_KEY_INVALIDA = f"Bearer {os.getenv('API_KEY_INVALIDA')}"
+API_KEY_WITHOUT_PERMISSION = f"Bearer {os.getenv('API_KEY_WITHOUT_PERMISSION')}"
 
-def crear_codigo_promocional_valido():
+def crear_codigo_promocional_valido(coupon):
+    coupon_id = coupon.json().get("id")
     headers = build_headers()
     payload = {
-        "coupon": "coupon_valido",
         "active": True,
         "code": "PROMO2025",
-        "restrictions[usage_limit]": 10
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
+    response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
+    log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
+    return response
+
+def crear_codigo_promocional_inactivo(coupon):
+    coupon_id = coupon.json().get("id")
+    headers = build_headers()
+    payload = {
+        "active": False,
+        "code": "PROMO2025",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id
+    }
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
@@ -25,78 +41,93 @@ def crear_codigo_promocional_sin_coupon():
     headers = build_headers()
     payload = {
         "active": True,
-        "code": "PROMO_SIN_COUPON"
+        "code": "PROMO_SIN_COUPON",
+        "promotion[type]": "coupon",
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
 
-def crear_codigo_promocional_duplicado():
+def crear_codigo_promocional_duplicado(coupon):
+    coupon_id = coupon.json().get("id")
     headers = build_headers()
     payload = {
-        "coupon": "coupon_valido",
-        "code": "PROMO_DUPLICADO"
+        "code": "PROMO2025",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
 
-def crear_codigo_promocional_token_invalido():
+def crear_codigo_promocional_token_invalido(coupon):
+    coupon_id = coupon.json().get("id")
     headers = build_headers(API_KEY_INVALIDA)
     payload = {
-        "coupon": "coupon_valido",
-        "code": "PROMO_TOKEN_INVALIDO"
+        "code": "PROMO_TOKEN_INVALIDO",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
 
-def crear_codigo_promocional_sin_token():
+def crear_codigo_promocional_sin_token(coupon):
+    coupon_id = coupon.json().get("id")
     headers = build_headers_sin_authorization()
     payload = {
-        "coupon": "coupon_valido",
-        "code": "PROMO_SIN_TOKEN"
+        "code": "PROMO_SIN_TOKEN",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
 
-def crear_codigo_promocional_limite_uso(usage_limit=0):
+def crear_codigo_promocional_limite_uso(usage_limit=0,coupon=None):
+    coupon_id = coupon.json().get("id")
     headers = build_headers()
     payload = {
-        "coupon": "coupon_valido",
         "code": "PROMO_LIMITE_USO",
-        "restrictions[usage_limit]": usage_limit
+        "restrictions[usage_limit]": usage_limit,
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
 
-def crear_codigo_promocional_active_invalido():
+def crear_codigo_promocional_active_invalido(coupon):
+    coupon_id = coupon.json().get("id")
     headers = build_headers()
     payload = {
-        "coupon": "coupon_valido",
         "code": "PROMO_ACTIVE_INVALIDO",
-        "active": "yes"
+        "active": "yes",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id
+
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
 
-def crear_codigo_promocional_permisos_restringidos():
-    headers = {"Authorization": "Bearer sin_permisos"}
+def crear_codigo_promocional_permisos_restringidos(coupon):
+    coupon_id = coupon.json().get("id")
+    headers = build_headers(API_KEY_WITHOUT_PERMISSION)
     payload = {
         "coupon": "coupon_valido",
-        "code": "PROMO_PERMISOS_RESTRINGIDOS"
+        "code": "PROMO_PERMISOS_RESTRINGIDOS",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
@@ -104,69 +135,91 @@ def crear_codigo_promocional_permisos_restringidos():
 def crear_codigo_promocional_coupon_inexistente():
     headers = build_headers()
     payload = {
-        "coupon": "coupon_inexistente",
-        "code": "PROMO_COUPON_INEXISTENTE"
+        "code": "PROMO_COUPON_INEXISTENTE",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": "coupon_inexistente"
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
+    response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
+    log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
+    return response
+def crear_codigo_promocional_coupon_existente(coupon):
+    coupon_id = coupon.json().get("id")
+    headers = build_headers()
+    payload = {
+        "code": "PROMO_COUPON_EXISTENTE",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id
+    }
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
 
-def crear_codigo_promocional_estructura_respuesta():
+def crear_codigo_promocional_estructura_respuesta(coupon):
+    coupon_id = coupon.json().get("id")
     headers = build_headers()
     payload = {
-        "coupon": "coupon_valido",
-        "code": "PROMO_VALIDAR_ESTRUCTURA"
+        "code": "PROMO_VALIDAR_ESTRUCTURA",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
 
-def crear_codigo_promocional_validar_tipos():
+def crear_codigo_promocional_validar_tipos(coupon):
+    coupon_id = coupon.json().get("id")
     headers = build_headers()
     payload = {
-        "coupon": "coupon_valido",
         "code": "PROMO_VALIDAR_TIPOS",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id,
         "active": True,
-        "restrictions[usage_limit]": 10
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
 
-def crear_codigo_promocional_validar_json_header():
+def crear_codigo_promocional_validar_json_header(coupon):
+    coupon_id = coupon.json().get("id")
     headers = build_headers()
     payload = {
-        "coupon": "coupon_valido",
-        "code": "PROMO_JSON_HEADER"
+        "code": "PROMO_JSON_HEADER",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id,
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response
 
-def crear_codigo_promocional_medir_tiempo_respuesta():
+def crear_codigo_promocional_medir_tiempo_respuesta(coupon):
+    coupon_id = coupon.json().get("id")
     headers = build_headers()
     payload = {
-        "coupon": "coupon_valido",
-        "code": "PROMO_TIEMPO_RESPUESTA"
+        "code": "PROMO_TIEMPO_RESPUESTA",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id,
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     start = time.time()
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     duration = time.time() - start
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return {"response": response, "duration": duration}
 
-def crear_codigo_promocional_code_case_sensitive():
+def crear_codigo_promocional_code_case_sensitive(coupon):
+    coupon_id = coupon.json().get("id")
     headers = build_headers()
     payload = {
-        "coupon": "coupon_valido",
-        "code": "PromoMayuscula"
+        "code": "PromoMayuscula",
+        "promotion[type]": "coupon",
+        "promotion[coupon]": coupon_id,
     }
-    endpoint = PromotionCodeEndpoints.CREATE_PROMO_CODE.value
+    endpoint = PromotionCodeEndpoints.CREATE_PROMOTION_CODE.value
     response = StripeAPI(BASE_URL).post(endpoint=endpoint, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, payload=payload, response=response)
     return response

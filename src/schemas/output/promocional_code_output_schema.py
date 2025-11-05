@@ -2,87 +2,81 @@ promocional_code_output_schema = {
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "id": {
-      "type": "string"
-    },
-    "object": {
-      "type": "string"
-    },
-    "active": {
-      "type": "boolean"
-    },
-    "code": {
-      "type": "string"
-    },
-    "promotion": {
+    "id": { "type": "string" },
+    "object": { "type": "string", "enum": ["promotion_code"] },
+    "active": { "type": "boolean" },
+    "code": { "type": "string" },
+    "coupon": {
       "type": "object",
       "properties": {
-        "type": {
-          "type": "string"
-        },
-        "coupon": {
-          "type": "string"
-        }
+        "id": { "type": "string" },
+        "object": { "type": "string", "enum": ["coupon"] },
+        "amount_off": { "type": ["number", "null"] },
+        "created": { "type": "integer" },
+        "currency": { "type": ["string", "null"] },
+        "duration": { "type": "string" },
+        "duration_in_months": { "type": ["integer", "null"] },
+        "livemode": { "type": "boolean" },
+        "max_redemptions": { "type": ["integer", "null"] },
+        "metadata": { "type": "object" },
+        "name": { "type": ["string", "null"] },
+        "percent_off": { "type": ["number", "null"] },
+        "redeem_by": { "type": ["integer", "null"] },
+        "times_redeemed": { "type": "integer" },
+        "valid": { "type": "boolean" }
       },
       "required": [
-        "type",
-        "coupon"
+        "id",
+        "object",
+        "created",
+        "duration",
+        "livemode",
+        "metadata",
+        "times_redeemed",
+        "valid"
       ]
     },
-    "created": {
-      "type": "integer"
-    },
-    "customer": {
-      "type": "null"
-    },
-    "expires_at": {
-      "type": "null"
-    },
-    "livemode": {
-      "type": "boolean"
-    },
-    "max_redemptions": {
-      "type": "null"
-    },
-    "metadata": {
-      "type": "object"
-    },
+    "created": { "type": "integer" },
+    "customer": { "type": ["string", "null"] },
+    "expires_at": { "type": ["integer", "null"] },
+    "livemode": { "type": "boolean" },
+    "max_redemptions": { "type": ["integer", "null"] },
+    "metadata": { "type": "object" },
     "restrictions": {
       "type": "object",
       "properties": {
-        "first_time_transaction": {
-          "type": "boolean"
-        },
-        "minimum_amount": {
-          "type": "null"
-        },
-        "minimum_amount_currency": {
-          "type": "null"
-        }
+        "first_time_transaction": { "type": "boolean" },
+        "minimum_amount": { "type": ["integer", "null"] },
+        "minimum_amount_currency": { "type": ["string", "null"] }
       },
-      "required": [
-        "first_time_transaction",
-        "minimum_amount",
-        "minimum_amount_currency"
-      ]
+      "required": ["first_time_transaction"]
     },
-    "times_redeemed": {
-      "type": "integer"
-    }
+    "times_redeemed": { "type": "integer" }
   },
   "required": [
     "id",
     "object",
     "active",
     "code",
-    "promotion",
+    "coupon",
     "created",
-    "customer",
-    "expires_at",
     "livemode",
-    "max_redemptions",
     "metadata",
     "restrictions",
     "times_redeemed"
   ]
+}
+list_promocional_code_output_schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "object": { "type": "string", "enum": ["list"] },
+    "data": {
+      "type": "array",
+      "items": promocional_code_output_schema
+    },
+    "has_more": { "type": "boolean" },
+    "url": { "type": "string" }
+  },
+  "required": ["object", "data", "has_more", "url"]
 }

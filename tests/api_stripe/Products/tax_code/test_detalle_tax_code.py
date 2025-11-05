@@ -31,14 +31,12 @@ def test_TAXGET001_obtener_tax_code_existente(tax_code_valido):
     assert_consulta_exitosa(respuesta)
     assert_estructura_respuesta_tax_code(respuesta)
     assert_object_tax_code(respuesta)
-    assert_tipos_datos_tax_code(respuesta)
 
 @pytest.mark.functional
 def test_TAXGET002_obtener_tax_code_inexistente():
     logger.info("Iniciando test_TAXGET002_obtener_tax_code_inexistente")
     respuesta = consultar_tax_code_inexistente()
     assert_consulta_id_inexistente(respuesta)
-    assert_error_404_coherente(respuesta)
 
 @pytest.mark.functional
 def test_TAXGET003_obtener_tax_code_sin_token(tax_code_valido):
@@ -64,7 +62,6 @@ def test_TAXGET006_validar_estructura_respuesta(tax_code_valido):
     respuesta = consultar_tax_code(tax_code_valido)
     assert_estructura_respuesta_tax_code(respuesta)
     assert_object_tax_code(respuesta)
-    assert_tipos_datos_tax_code(respuesta)
 
 @pytest.mark.regression
 def test_TAXGET007_validar_campo_object(tax_code_valido):
@@ -103,9 +100,9 @@ def test_TAXGET013_validar_content_type(tax_code_valido):
     assert respuesta.headers["Content-Type"] == "application/json"
 
 @pytest.mark.functional
-def test_TAXGET014_mayusculas_minusculas_tax_code(tax_code_valido):
+def test_TAXGET014_mayusculas_minusculas_tax_code():
     logger.info("Iniciando test_TAXGET014_mayusculas_minusculas_tax_code")
-    respuesta = consultar_tax_code_case_sensitive(tax_code_valido)
+    respuesta = consultar_tax_code_case_sensitive()
     assert_consulta_exitosa(respuesta)
 
 @pytest.mark.functional

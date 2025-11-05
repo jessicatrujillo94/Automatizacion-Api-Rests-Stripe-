@@ -75,7 +75,7 @@ def test_TAXL007_listar_tax_codes_limit_1():
 @pytest.mark.functional
 def test_TAXL009_listar_tax_codes_starting_after():
     logger.info("Iniciando test_TAXL009_listar_tax_codes_starting_after")
-    respuesta = listar_tax_codes_starting_after("tx_123")
+    respuesta = listar_tax_codes_starting_after("txcd_99999999")
     assert_listado_exitosa(respuesta)
 
 @pytest.mark.functional

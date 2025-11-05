@@ -103,7 +103,7 @@ def test_CPNL009_parametro_starting_after(coupon_creado):
     assert_listar_cupones_starting_after(response)
 
 
-@pytest.mark.performance
+@pytest.mark.functional
 def test_CPNL010_tiempo_respuesta():
     logger.info("Iniciando test_CPNL010_tiempo_respuesta")
     response = listar_cupones_tiempo_respuesta()

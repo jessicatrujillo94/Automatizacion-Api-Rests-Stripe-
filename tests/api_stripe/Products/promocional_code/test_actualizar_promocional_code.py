@@ -26,17 +26,17 @@ from src.assertions.actualizar_promotion_code_assertion import (
 
 @pytest.mark.smoke
 @pytest.mark.functional
-def test_PMUP001_actualizar_active_false(promo_creado):
+def test_PMUP001_actualizar_active_false(one_promotion_code):
     logger.info("Iniciando test_PMUP001_actualizar_active_false")
-    respuesta = actualizar_promo_active_false(promo_creado)
+    respuesta = actualizar_promo_active_false(one_promotion_code)
     assert_actualizacion_exitosa(respuesta)
     assert_estructura_respuesta_actualizacion(respuesta)
 
 
 @pytest.mark.functional
-def test_PMUP002_actualizar_restriction_usage_valido(promo_creado):
+def test_PMUP002_actualizar_restriction_usage_valido(one_promotion_code):
     logger.info("Iniciando test_PMUP002_actualizar_restriction_usage_valido")
-    respuesta = actualizar_promo_restriction_usage(promo_creado, usage_limit=5)
+    respuesta = actualizar_promo_restriction_usage(one_promotion_code, usage_limit=5)
     assert_actualizacion_exitosa(respuesta)
 
 
@@ -48,50 +48,50 @@ def test_PMUP003_actualizar_promo_id_invalido():
 
 
 @pytest.mark.functional
-def test_PMUP004_actualizar_sin_token(promo_creado):
+def test_PMUP004_actualizar_sin_token(one_promotion_code):
     logger.info("Iniciando test_PMUP004_actualizar_sin_token")
-    respuesta = actualizar_promo_sin_token(promo_creado)
+    respuesta = actualizar_promo_sin_token(one_promotion_code)
     assert_actualizacion_sin_permisos(respuesta)
 
 
 @pytest.mark.functional
-def test_PMUP005_actualizar_token_invalido(promo_creado):
+def test_PMUP005_actualizar_token_invalido(one_promotion_code):
     logger.info("Iniciando test_PMUP005_actualizar_token_invalido")
-    respuesta = actualizar_promo_token_invalido(promo_creado)
+    respuesta = actualizar_promo_token_invalido(one_promotion_code)
     assert_actualizacion_token_invalido(respuesta)
 
 
 @pytest.mark.functional
-def test_PMUP006_actualizar_body_vacio(promo_creado):
+def test_PMUP006_actualizar_body_vacio(one_promotion_code):
     logger.info("Iniciando test_PMUP006_actualizar_body_vacio")
-    respuesta = actualizar_promo_body_vacio(promo_creado)
+    respuesta = actualizar_promo_body_vacio(one_promotion_code)
     assert_actualizacion_body_invalido(respuesta)
 
 
 @pytest.mark.functional
-def test_PMUP007_actualizar_active_invalido(promo_creado):
+def test_PMUP007_actualizar_active_invalido(one_promotion_code):
     logger.info("Iniciando test_PMUP007_actualizar_active_invalido")
-    respuesta = actualizar_promo_active_invalido(promo_creado)
+    respuesta = actualizar_promo_active_invalido(one_promotion_code)
     assert_actualizacion_active_invalido(respuesta)
 
 
 @pytest.mark.functional
-def test_PMUP008_actualizar_restriction_invalido(promo_creado):
+def test_PMUP008_actualizar_restriction_invalido(one_promotion_code):
     logger.info("Iniciando test_PMUP008_actualizar_restriction_invalido")
-    respuesta = actualizar_promo_restriction_invalido(promo_creado, usage_limit="cinco")
+    respuesta = actualizar_promo_restriction_invalido(one_promotion_code)
     assert_actualizacion_restriction_invalido(respuesta)
 
 
 @pytest.mark.functional
-def test_PMUP009_actualizar_multiple_campos(promo_creado):
+def test_PMUP009_actualizar_multiple_campos(one_promotion_code):
     logger.info("Iniciando test_PMUP009_actualizar_multiple_campos")
-    respuesta = actualizar_promo_multiple_campos(promo_creado, active=False, usage_limit=3)
+    respuesta = actualizar_promo_multiple_campos(one_promotion_code)
     assert_actualizacion_exitosa(respuesta)
     assert_estructura_respuesta_actualizacion(respuesta)
 
 
 @pytest.mark.regression
-def test_PMUP010_validar_estructura_respuesta(promo_creado):
+def test_PMUP010_validar_estructura_respuesta(one_promotion_code):
     logger.info("Iniciando test_PMUP010_validar_estructura_respuesta")
-    respuesta = consultar_promo_code_id(promo_creado)
+    respuesta = consultar_promo_code_id(one_promotion_code)
     assert_estructura_respuesta_actualizacion(respuesta)

@@ -6,12 +6,18 @@ from src.stripe_api.crear_products_api import crear_producto_campos_minimos, cre
 from src.stripe_api.obtener_products_api import obtener_lista_completa_productos, obtener_productos_inactivos
 from src.stripe_api.crear_prices_api import crear_price_campos_minimos
 from src.stripe_api.crear_coupons_api import crear_cupon_valido, eliminar_cupon
+from src.stripe_api.listar_promotion_codes_api import listar_promotion_codes
+from src.stripe_api.crear_promotion_code_api import crear_codigo_promocional_valido, crear_codigo_promocional_inactivo
+from src.stripe_api.listar_tax_codes_api import listar_tax_codes
+from src.stripe_api.listar_tax_rates_api import listar_tax_rates
+from src.stripe_api.crear_tax_rate_api import crear_tax_rate
 from src.stripe_api.stripe_api import StripeAPI
 load_dotenv()
 
 BASE_URL = os.getenv("BASE_URL")
 API_KEY = os.getenv("API_KEY")
-TOKEN_CADUCADO = os.getenv("TOKEN_CADUCADO")
+TOKEN_CADUCADO = os.getenv("API_KEY_EXPIRED")
+TOKEN_INVALIDO = os.getenv("API_KEY_INVALIDA")
 TOKEN_SIN_PERMISO = os.getenv("TOKEN_SIN_PERMISO")
 
 @pytest.fixture
@@ -76,6 +82,60 @@ def coupon_creado():
 
     if coupon_id:
         eliminar_cupon(response)
+
+@pytest.fixture(scope="session")
+def one_promotion_code(coupon_creado):        
+    response = listar_promotion_codes(filter={"active": "true"})  
+    promotions_code = response.json().get("data", []) 
+    promotion_code = None
+    if len(promotions_code) > 0:
+        promotion_code = promotions_code[0]
+    else:
+        response_promotion = crear_codigo_promocional_valido(coupon_creado)
+        promotion_code = response_promotion.json()
+
+    yield promotion_code
+    if coupon_creado:
+        eliminar_cupon(coupon_creado)
+
+@pytest.fixture(scope="session")
+def one_promotion_code_inactivo(coupon_creado):
+    response = listar_promotion_codes(filter={"active": "false"})
+    promotions_code = response.json().get("data", [])
+    promotion_code = None
+
+    if len(promotions_code) > 0:
+        promotion_code = promotions_code[0]
+    else:
+        response_promotion = crear_codigo_promocional_inactivo(coupon_creado)
+        promotion_code = response_promotion.json()
+
+    yield promotion_code
+
+    # Cleanup
+    if coupon_creado:
+        eliminar_cupon(coupon_creado)
+@pytest.fixture(scope="session")
+def tax_code_valido():
+    response = listar_tax_codes()
+    taxs_codes = response.json().get("data", [])
+    if len(taxs_codes) > 0:
+        tax_code = taxs_codes[0]
+    else:
+        tax_code = {}
+    yield tax_code
+
+@pytest.fixture(scope="session")
+def tax_rate_valido():
+    response = listar_tax_rates()
+    taxs_rates = response.json().get("data", [])
+    tax_rate = {}
+    if len(taxs_rates) > 0:
+        tax_rate = taxs_rates[0]
+    else:
+        new_tax_rate = crear_tax_rate()
+        tax_rate = new_tax_rate.json()
+    yield tax_rate
 
 @pytest.fixture(scope="session")
 def pausa():

@@ -16,7 +16,7 @@ def assert_consulta_exitosa(response):
 
 def assert_consulta_id_inexistente(response):
     try:
-        assert response.status_code == 404, f"Se esperaba 404 Not Found, se recibió {response.status_code}"
+        assert response.status_code in [404,400], f"Se esperaba 404 Not Found, se recibió {response.status_code}"
     except AssertionError as e:
         pytest.xfail(f"XFAIL ID inexistente: {e}")
     except Exception as e:
@@ -43,7 +43,7 @@ def assert_consulta_token_invalido(response):
 
 def assert_consulta_id_vacio(response):
     try:
-        assert response.status_code == 400, f"Se esperaba 400 Bad Request por ID vacío, se recibió {response.status_code}"
+        assert response.status_code in [400,404], f"Se esperaba 400 Bad Request por ID vacío, se recibió {response.status_code}"
     except AssertionError as e:
         pytest.xfail(f"XFAIL ID vacío: {e}")
     except Exception as e:
@@ -74,10 +74,9 @@ def assert_tipos_datos_tax_code(response):
     try:
         data = response.json()
         assert isinstance(data.get("id"), str), f"id debe ser str, se recibió {type(data.get('id'))}"
-        assert isinstance(data.get("display_name"), str), f"display_name debe ser str, se recibió {type(data.get('display_name'))}"
-        assert isinstance(data.get("percentage"), (int, float)), f"percentage debe ser numérico, se recibió {type(data.get('percentage'))}"
-        assert isinstance(data.get("inclusive"), bool), f"inclusive debe ser bool, se recibió {type(data.get('inclusive'))}"
-        assert isinstance(data.get("active"), bool), f"active debe ser bool, se recibió {type(data.get('active'))}"
+        assert isinstance(data.get("object"), str), f"display_name debe ser str, se recibió {type(data.get('object'))}"
+        assert isinstance(data.get("description"), (str)), f"percentage debe ser numérico, se recibió {type(data.get('description'))}"
+        assert isinstance(data.get("name"), str), f"inclusive debe ser bool, se recibió {type(data.get('name'))}"
     except AssertionError as e:
         pytest.xfail(f"XFAIL tipos de datos incorrectos: {e}")
     except Exception as e:

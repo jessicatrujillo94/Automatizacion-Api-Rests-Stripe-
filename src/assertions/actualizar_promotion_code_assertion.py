@@ -1,13 +1,13 @@
 import pytest
 import jsonschema
-from src.schemas.output.promotion_code_output_schema import promotion_code_output_schema
+from src.schemas.output.promocional_code_output_schema import promocional_code_output_schema
 
 
 def assert_actualizacion_exitosa(response):
     try:
         print(response.json())
         assert response.status_code == 200, f"Se esperaba 200 OK, se recibió {response.status_code}"
-        jsonschema.validate(instance=response.json(), schema=promotion_code_output_schema)
+        jsonschema.validate(instance=response.json(), schema=promocional_code_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
         pytest.xfail(f"XFAIL actualización exitosa: {e}")
     except Exception as e:
@@ -80,7 +80,7 @@ def assert_actualizacion_restriction_invalido(response):
 def assert_estructura_respuesta_actualizacion(response):
     try:
         assert response.status_code == 200, f"Código inesperado: {response.status_code}"
-        jsonschema.validate(instance=response.json(), schema=promotion_code_output_schema)
+        jsonschema.validate(instance=response.json(), schema=promocional_code_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
         pytest.xfail(f"XFAIL estructura de respuesta inválida: {e}")
     except Exception as e:

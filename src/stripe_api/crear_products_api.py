@@ -141,7 +141,7 @@ def crear_multiples_productos():
             url=f"{BASE_URL}{ENDPOINT}",
             headers=headers,
             response=response,
-            payload=payload,
+            payload=producto,
         )
         responses.append(response)
     return responses

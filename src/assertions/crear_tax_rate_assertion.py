@@ -5,7 +5,7 @@ from src.schemas.output.tax_rate_output_schema import tax_rate_output_schema
 
 def assert_creacion_exitosa(response):
     try:
-        assert response.status_code == 201, f"Se esperaba 201 Created, se recibió {response.status_code}"
+        assert response.status_code in [201, 200], f"Se esperaba 201, 200 Created, se recibió {response.status_code}"
         jsonschema.validate(instance=response.json(), schema=tax_rate_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
         pytest.xfail(f"XFAIL creación exitosa: {e}")
@@ -60,7 +60,7 @@ def assert_creacion_token_invalido(response):
 
 def assert_estructura_respuesta_creacion(response):
     try:
-        assert response.status_code == 201, f"Código inesperado: {response.status_code}"
+        assert response.status_code in [201, 200], f"Código inesperado: {response.status_code}"
         jsonschema.validate(instance=response.json(), schema=tax_rate_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
         pytest.xfail(f"XFAIL estructura de respuesta inválida: {e}")

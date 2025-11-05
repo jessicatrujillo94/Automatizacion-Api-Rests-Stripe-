@@ -73,10 +73,10 @@ def test_TAXRL007_listar_tax_rates_limit_1():
 @pytest.mark.functional
 def test_TAXRL008_listar_tax_rates_starting_after():
     logger.info("Iniciando test_TAXRL008_listar_tax_rates_starting_after")
-    respuesta = listar_tax_rates_starting_after("txr_123")
+    respuesta = listar_tax_rates_starting_after("txr_1SQCA3A8CmS6V2ZIDw9cy8q1")
     assert_listado_exitosa(respuesta)
 
-@pytest.mark.performance
+@pytest.mark.functional
 def test_TAXRL009_tiempo_respuesta():
     logger.info("Iniciando test_TAXRL009_tiempo_respuesta")
     respuesta = listar_tax_rates()
@@ -88,7 +88,7 @@ def test_TAXRL010_filtro_invalido_limit_negativo():
     respuesta = listar_tax_rates_filtro_invalido(-5)
     assert_filtro_invalido(respuesta)
 
-@pytest.mark.integration
+@pytest.mark.functional
 def test_TAXRL011_validar_ids_unicos():
     logger.info("Iniciando test_TAXRL011_validar_ids_unicos")
     respuesta = listar_tax_rates()

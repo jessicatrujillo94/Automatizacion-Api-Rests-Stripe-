@@ -1,13 +1,13 @@
 import pytest
 import jsonschema
-from src.schemas.output.list_promotion_codes_schema import list_promotion_codes_schema
+from src.schemas.output.promocional_code_output_schema import list_promocional_code_output_schema
 
 
 def assert_listado_exitosa(response):
     try:
         print(response.json())
         assert response.status_code == 200, f"Se esperaba 200 OK, se recibió {response.status_code}"
-        jsonschema.validate(instance=response.json(), schema=list_promotion_codes_schema)
+        jsonschema.validate(instance=response.json(), schema=list_promocional_code_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
         pytest.xfail(f"XFAIL listado exitoso: {e}")
     except Exception as e:
@@ -35,7 +35,7 @@ def assert_listado_token_invalido(response):
 def assert_estructura_respuesta_listado(response):
     try:
         assert response.status_code == 200, f"Código inesperado: {response.status_code}"
-        jsonschema.validate(instance=response.json(), schema=list_promotion_codes_schema)
+        jsonschema.validate(instance=response.json(), schema=list_promocional_code_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
         pytest.xfail(f"XFAIL estructura de respuesta inválida: {e}")
     except Exception as e:

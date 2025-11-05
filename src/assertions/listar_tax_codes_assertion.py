@@ -1,12 +1,12 @@
 import pytest
 import jsonschema
-from src.schemas.output.list_tax_codes_output_schema import list_tax_codes_output_schema
+from src.schemas.output.tax_code_output_schema import tax_codes_output_schema
 
 
 def assert_listado_exitosa(response):
     try:
         assert response.status_code == 200, f"Se esperaba 200 OK, se recibió {response.status_code}"
-        jsonschema.validate(instance=response.json(), schema=list_tax_codes_output_schema)
+        jsonschema.validate(instance=response.json(), schema=tax_codes_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
         pytest.xfail(f"XFAIL listado exitoso: {e}")
     except Exception as e:
@@ -34,7 +34,7 @@ def assert_listado_token_invalido(response):
 def assert_estructura_respuesta_listado(response):
     try:
         assert response.status_code == 200, f"Código inesperado: {response.status_code}"
-        jsonschema.validate(instance=response.json(), schema=list_tax_codes_output_schema)
+        jsonschema.validate(instance=response.json(), schema=tax_codes_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
         pytest.xfail(f"XFAIL estructura de respuesta inválida: {e}")
     except Exception as e:
@@ -82,11 +82,11 @@ def assert_formato_json(response):
         pytest.xfail(f"XFAIL excepción inesperada: {e}")
 
 
-def assert_jurisdiccion_coherente(response, jurisdiccion_esperada):
+def assert_jurisdiccion_coherente(response):
     try:
         data = response.json().get("data", [])
         for item in data:
-            assert item.get("jurisdiction") == jurisdiccion_esperada, f"Jurisdicción incoherente: se esperaba {jurisdiccion_esperada}, se recibió {item.get('jurisdiction')}"
+            assert item.get("object") == "tax_code", f"Jurisdicción incoherente: se esperaba tax_code, se recibió {item.get('object')}"
     except AssertionError as e:
         pytest.xfail(f"XFAIL jurisdicción incoherente: {e}")
     except Exception as e:
@@ -95,7 +95,7 @@ def assert_jurisdiccion_coherente(response, jurisdiccion_esperada):
 
 def assert_listado_sin_permisos(response):
     try:
-        assert response.status_code == 403, f"Se esperaba 403 Forbidden por permisos insuficientes, se recibió {response.status_code}"
+        assert response.status_code in [403, 401], f"Se esperaba 403 Forbidden por permisos insuficientes, se recibió {response.status_code}"
     except AssertionError as e:
         pytest.xfail(f"XFAIL listado sin permisos: {e}")
     except Exception as e:

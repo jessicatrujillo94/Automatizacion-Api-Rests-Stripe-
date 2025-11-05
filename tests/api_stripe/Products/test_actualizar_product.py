@@ -61,9 +61,9 @@ def test_PRAC004_actualizar_producto_token_invalido(producto_creado):
 
 
 @pytest.mark.functional
-def test_PRAC005_actualizar_producto_sin_permisos():
+def test_PRAC005_actualizar_producto_sin_permisos(producto_creado):
     logger.info("Iniciando test_PRAC005_actualizar_producto_sin_permisos")
-    respuesta = actualizar_producto_sin_permisos()
+    respuesta = actualizar_producto_sin_permisos(producto_creado)
     assert_actualizacion_sin_permisos(respuesta)
 
 

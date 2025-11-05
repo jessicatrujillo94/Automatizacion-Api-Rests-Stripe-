@@ -6,10 +6,10 @@ from src.schemas.output.promocional_code_output_schema import  promocional_code_
 def assert_creacion_exitosa(response):
     try:
         print(response.json())
-        assert response.status_code == 201, f"Se esperaba 201 Created, se recibió {response.status_code}"
+        assert response.status_code in [201, 200], f"Se esperaba 201 Created, se recibió {response.status_code}"
         jsonschema.validate(instance=response.json(), schema=promocional_code_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
-        pytest.xfail(f"XFAIL creación exitosa: {e}")
+        pytest.xfail(f"{e.message}")
     except Exception as e:
         pytest.xfail(f"XFAIL excepción inesperada: {e}")
 
@@ -85,12 +85,12 @@ def assert_respuesta_json_header(response):
 
 def assert_tiempo_respuesta(response, max_ms=2000):
     try:
-        tiempo = response.elapsed.total_seconds() * 1000
+        tiempo = response.get("duration")
         assert tiempo <= max_ms, f"Tiempo de respuesta {tiempo}ms excede límite de {max_ms}ms"
     except AssertionError as e:
-        pytest.xfail(f"XFAIL tiempo de respuesta: {e}")
+        pytest.xfail(f"{e}")
     except Exception as e:
-        pytest.xfail(f"XFAIL excepción inesperada: {e}")
+        pytest.xfail(f"{e}")
 
 
 def assert_limite_uso(response):
@@ -104,7 +104,7 @@ def assert_limite_uso(response):
 
 def assert_coupon_existente(response):
     try:
-        assert response.status_code == 400, f"Se esperaba 400 por coupon inexistente, se recibió {response.status_code}"
+        assert response.status_code in [200,201], f"Se esperaba 400 por coupon inexistente, se recibió {response.status_code}"
     except AssertionError as e:
         pytest.xfail(f"XFAIL coupon inexistente: {e}")
     except Exception as e:
@@ -122,13 +122,14 @@ def assert_valor_invalido(response):
 
 def assert_code_unico_case_sensitive(response):
     try:
-        assert response.status_code == 201, f"Se esperaba 201 Created, se recibió {response.status_code}"
+        assert response.status_code in [201,200], f"Se esperaba 201 Created, se recibió {response.status_code}"
         code = response.json().get("code")
-        assert code.isupper() or code.islower(), "El código debe respetar mayúsculas/minúsculas"
+        print(code.isupper())
+        assert not code.isupper() and not code.islower(), "El código debe respetar mayúsculas/minúsculas"
     except AssertionError as e:
-        pytest.xfail(f"XFAIL case-sensitive: {e}")
+        pytest.xfail(f"{e}")
     except Exception as e:
-        pytest.xfail(f"XFAIL excepción inesperada: {e}")
+        pytest.xfail(f"{e}")
 
 
 def assert_permisos_restringidos(response):

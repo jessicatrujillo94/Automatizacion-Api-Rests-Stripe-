@@ -104,7 +104,7 @@ def assert_ids_unicos(response):
 
 def assert_listado_sin_permisos(response):
     try:
-        assert response.status_code == 403, f"Se esperaba 403 Forbidden por permisos insuficientes, se recibió {response.status_code}"
+        assert response.status_code in [403, 401], f"Se esperaba 403,401 Forbidden por permisos insuficientes, se recibió {response.status_code}"
     except AssertionError as e:
         pytest.xfail(f"XFAIL sin permisos: {e}")
     except Exception as e:

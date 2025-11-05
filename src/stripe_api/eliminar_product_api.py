@@ -88,6 +88,6 @@ def eliminar_multiples_productos(responses_creacion):
         producto_id = resp.json().get("id")
         endpoint = ENDPOINT.format(product_id=producto_id)
         response = StripeAPI(BASE_URL).delete(endpoint=endpoint, headers=headers)
-        log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, response=response)
+        log_request_response(url=f"{BASE_URL}{endpoint}", headers=headers, response=response, payload={})
         respuestas.append(response)
     return respuestas

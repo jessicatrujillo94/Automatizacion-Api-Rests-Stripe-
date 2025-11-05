@@ -17,9 +17,9 @@ from src.assertions.consultar_tax_rate_assertion import (
 
 @pytest.mark.smoke
 @pytest.mark.functional
-def test_TAXRGET001_consultar_tax_rate_valido(tax_rate_creado):
+def test_TAXRGET001_consultar_tax_rate_valido(tax_rate_valido):
     logger.info("Iniciando test_TAXRGET001_consultar_tax_rate_valido")
-    respuesta = consultar_tax_rate(tax_rate_creado)
+    respuesta = consultar_tax_rate(tax_rate_valido)
     assert_consulta_exitosa(respuesta)
     assert_estructura_respuesta_consulta(respuesta)
 
@@ -30,31 +30,31 @@ def test_TAXRGET002_consultar_tax_rate_inexistente():
     assert_consulta_id_inexistente(respuesta)
 
 @pytest.mark.functional
-def test_TAXRGET003_consultar_tax_rate_sin_token(tax_rate_creado):
+def test_TAXRGET003_consultar_tax_rate_sin_token(tax_rate_valido):
     logger.info("Iniciando test_TAXRGET003_consultar_tax_rate_sin_token")
-    respuesta = consultar_tax_rate_sin_token(tax_rate_creado)
+    respuesta = consultar_tax_rate_sin_token(tax_rate_valido)
     assert_consulta_sin_token(respuesta)
 
 @pytest.mark.functional
-def test_TAXRGET004_consultar_tax_rate_token_invalido(tax_rate_creado):
+def test_TAXRGET004_consultar_tax_rate_token_invalido(tax_rate_valido):
     logger.info("Iniciando test_TAXRGET004_consultar_tax_rate_token_invalido")
-    respuesta = consultar_tax_rate_token_invalido(tax_rate_creado)
+    respuesta = consultar_tax_rate_token_invalido(tax_rate_valido)
     assert_consulta_token_invalido(respuesta)
 
 @pytest.mark.regression
-def test_TAXRGET005_validar_estructura_respuesta(tax_rate_creado):
+def test_TAXRGET005_validar_estructura_respuesta(tax_rate_valido):
     logger.info("Iniciando test_TAXRGET005_validar_estructura_respuesta")
-    respuesta = consultar_tax_rate(tax_rate_creado)
+    respuesta = consultar_tax_rate(tax_rate_valido)
     assert_estructura_respuesta_consulta(respuesta)
 
-@pytest.mark.performance
-def test_TAXRGET006_tiempo_respuesta(tax_rate_creado):
+@pytest.mark.functional
+def test_TAXRGET006_tiempo_respuesta(tax_rate_valido):
     logger.info("Iniciando test_TAXRGET006_tiempo_respuesta")
-    respuesta = consultar_tax_rate(tax_rate_creado)
+    respuesta = consultar_tax_rate(tax_rate_valido)
     assert respuesta.elapsed.total_seconds() < 2, "Tiempo de respuesta mayor a 2s"
 
 @pytest.mark.functional
 def test_TAXRGET007_id_malformado():
     logger.info("Iniciando test_TAXRGET007_id_malformado")
-    respuesta = consultar_tax_rate_id_malformado("txr_!@#")
+    respuesta = consultar_tax_rate_id_malformado({id:"txr_!@#"})
     assert_consulta_id_inexistente(respuesta)

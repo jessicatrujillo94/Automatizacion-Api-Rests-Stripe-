@@ -181,7 +181,7 @@ def test_POSTCPN014_crear_cupon_campo_no_soportado():
         eliminar_cupon(respuesta)
 
 
-@pytest.mark.stress
+@pytest.mark.functional
 def test_POSTCPN015_crear_multiples_cupones_consecutivos():
     logger.info("Iniciando test_POSTCPN015_crear_multiples_cupones_consecutivos")
     respuestas = crear_cupon_multiples_consecutivos()
