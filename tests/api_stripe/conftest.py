@@ -2,6 +2,9 @@ import pytest
 import os
 import time
 from dotenv import load_dotenv
+import allure
+from pathlib import Path
+
 from src.stripe_api.crear_products_api import crear_producto_campos_minimos, crear_producto_inactivo, eliminar_producto
 from src.stripe_api.obtener_products_api import obtener_lista_completa_productos, obtener_productos_inactivos
 from src.stripe_api.crear_prices_api import crear_price_campos_minimos
@@ -163,28 +166,3 @@ def headers_without_api_key():
     return {
         "Content-Type": "application/json"
     }
-""" @pytest.fixture(scope="session")
-def crear_lista_sin_token(request):
-    params = request.param
-    payload = params["payload"]
-    name = payload.get("name")
-    content = payload.get("content", None)
-    folder_id = params.get("folder_id",ID_FOLDER)
-    response = crear_lista_no_token(folder_id=folder_id, name=name, content=content)
-    yield response, payload, folder_id
-    if(response.status_code in [201, 200] and response.json().get("id")):
-        eliminar_lista(response.json().get("id"))
-
-@pytest.fixture(scope="session")
-def crear_lista_con_token_invalido(request):
-    params = request.param
-    payload = params["payload"]
-    name = payload.get("name")
-    content = payload.get("content", None)
-    folder_id = params.get("folder_id",ID_FOLDER)
-    response = crear_lista_token_invalido(folder_id=folder_id, name=name, content=content)
-    yield response, payload, folder_id
-    if(response.status_code in [201, 200] and response.json().get("id")):
-        resp_delete = eliminar_lista(response.json().get("id"))
-        logger.warning(f"No se pudo eliminar la lista {response.json().get('id')}. Status: {resp_delete.status_code}, Response: {resp_delete.text}")
- """

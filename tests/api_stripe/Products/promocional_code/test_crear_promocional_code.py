@@ -1,4 +1,5 @@
 import pytest
+import allure
 from src.logs.logger import logger
 from src.stripe_api.crear_promotion_code_api import (
     crear_codigo_promocional_valido,
@@ -34,109 +35,139 @@ from src.assertions.crear_promotion_code_assertion import (
     assert_permisos_restringidos,
 )
 
-
+@allure.epic("EPIC: Gestión de Promotion Codes")
+@allure.feature("Feature: Crear Promotion Code")
+@allure.story("HU: HU008-Crear Promotion Code")
+@pytest.mark.smoke
 @pytest.mark.functional
 def test_POSTPMCD001_crear_codigo_promocional_valido(coupon_creado):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("smoke", "functional", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD001_crear_codigo_promocional_valido")
     respuesta = crear_codigo_promocional_valido(coupon_creado)
     assert_creacion_exitosa(respuesta)
     assert_estructura_respuesta_promotion_code(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTPMCD002_crear_codigo_promocional_sin_coupon():
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD002_crear_codigo_promocional_sin_coupon")
     respuesta = crear_codigo_promocional_sin_coupon()
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTPMCD003_crear_codigo_promocional_duplicado(coupon_creado):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD003_crear_codigo_promocional_duplicado")
     respuesta = crear_codigo_promocional_duplicado(coupon_creado)
     assert_creacion_duplicado(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTPMCD004_crear_codigo_promocional_token_invalido(coupon_creado):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD004_crear_codigo_promocional_token_invalido")
     respuesta = crear_codigo_promocional_token_invalido(coupon_creado)
     assert_creacion_token_invalido(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTPMCD005_crear_codigo_promocional_sin_token(coupon_creado):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD005_crear_codigo_promocional_sin_token")
     respuesta = crear_codigo_promocional_sin_token(coupon_creado)
     assert_creacion_sin_token(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.regression
 def test_POSTPMCD006_validar_estructura_respuesta(coupon_creado):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("regression", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD006_validar_estructura_respuesta")
     respuesta = crear_codigo_promocional_estructura_respuesta(coupon_creado)
     assert_estructura_respuesta_promotion_code(respuesta)
-    
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.regression
 def test_POSTPMCD007_validar_tipos_datos(coupon_creado):
-    coupon_id = coupon_creado
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("regression", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD007_validar_tipos_datos")
-    respuesta = crear_codigo_promocional_validar_tipos(coupon_id)
+    respuesta = crear_codigo_promocional_validar_tipos(coupon_creado)
     assert_validacion_tipos_datos(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.regression
 def test_POSTPMCD008_validar_respuesta_json_header(coupon_creado):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("regression", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD008_validar_respuesta_json_header")
     respuesta = crear_codigo_promocional_validar_json_header(coupon_creado)
     assert_respuesta_json_header(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.functional
 def test_POSTPMCD009_medir_tiempo_respuesta(coupon_creado):
-    coupon_id = coupon_creado
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD009_medir_tiempo_respuesta")
-    respuesta = crear_codigo_promocional_medir_tiempo_respuesta(coupon_id)
+    respuesta = crear_codigo_promocional_medir_tiempo_respuesta(coupon_creado)
     assert_tiempo_respuesta(respuesta, max_ms=2000)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.functional
 def test_POSTPMCD010_crear_codigo_promocional_con_limite_uso(coupon_creado):
-    coupon_id = coupon_creado
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD010_crear_codigo_promocional_con_limite_uso")
-    respuesta = crear_codigo_promocional_limite_uso(1,coupon_id)
+    respuesta = crear_codigo_promocional_limite_uso(1, coupon_creado)
     assert_limite_uso(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
+@pytest.mark.integration
 @pytest.mark.functional
 def test_POSTPMCD011_validar_coupon_existente(coupon_creado):
-    coupon_id = coupon_creado
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("integration", "functional", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD011_validar_coupon_existente")
-    respuesta = crear_codigo_promocional_coupon_existente(coupon_id)
+    respuesta = crear_codigo_promocional_coupon_existente(coupon_creado)
     assert_coupon_existente(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTPMCD012_crear_codigo_promocional_active_invalido(coupon_creado):
-    coupon_id = coupon_creado
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD012_crear_codigo_promocional_active_invalido")
-    respuesta = crear_codigo_promocional_active_invalido(coupon_id)
+    respuesta = crear_codigo_promocional_active_invalido(coupon_creado)
     assert_valor_invalido(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.functional
 def test_POSTPMCD013_crear_codigo_promocional_code_case_sensitive(coupon_creado):
-    coupon_id = coupon_creado
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD013_crear_codigo_promocional_code_case_sensitive")
-    respuesta = crear_codigo_promocional_code_case_sensitive(coupon_id)
+    respuesta = crear_codigo_promocional_code_case_sensitive(coupon_creado)
     assert_code_unico_case_sensitive(respuesta)
 
-
+@allure.story("HU: HU008-Crear Promotion Code")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTPMCD014_crear_codigo_promocional_permisos_restringidos(coupon_creado):
-    coupon_id = coupon_creado
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "promotion_code")
     logger.info("Iniciando test_POSTPMCD014_crear_codigo_promocional_permisos_restringidos")
-    respuesta = crear_codigo_promocional_permisos_restringidos(coupon_id)
+    respuesta = crear_codigo_promocional_permisos_restringidos(coupon_creado)
     assert_permisos_restringidos(respuesta)

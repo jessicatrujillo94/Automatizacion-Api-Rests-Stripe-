@@ -9,7 +9,7 @@ def assert_creacion_exitosa(response):
         assert response.status_code in [201, 200], f"Se esperaba 201 Created, se recibió {response.status_code}"
         jsonschema.validate(instance=response.json(), schema=promocional_code_output_schema)
     except (AssertionError, jsonschema.ValidationError) as e:
-        pytest.xfail(f"{e.message}")
+        pytest.xfail(f"{e}")
     except Exception as e:
         pytest.xfail(f"XFAIL excepción inesperada: {e}")
 

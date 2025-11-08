@@ -35,7 +35,7 @@ def test_LOGIN001_autenticacion_exitosa_api_key_valida():
 
 
 @pytest.mark.functional
-@pytest.mark.regression
+@pytest.mark.negative
 def test_LOGIN002_autenticacion_fallida_api_key_invalida():
     """ Test LOGIN002: Autenticación fallida con API Key inválida """
     logger.info("Iniciando test_LOGIN002_autenticacion_fallida_api_key_invalida")
@@ -45,7 +45,6 @@ def test_LOGIN002_autenticacion_fallida_api_key_invalida():
 
 
 @pytest.mark.functional
-@pytest.mark.regression
 def test_LOGIN003_autenticacion_ausente_sin_token():
     """ Test LOGIN003: Autenticación ausente (sin header Authorization) """
     logger.info("Iniciando test_LOGIN003_autenticacion_ausente_sin_token")
@@ -55,7 +54,6 @@ def test_LOGIN003_autenticacion_ausente_sin_token():
 
 
 @pytest.mark.functional
-@pytest.mark.regression
 def test_LOGIN004_header_formato_incorrecto():
     """ Test LOGIN004: Header con formato incorrecto (sin 'Bearer') """
     logger.info("Iniciando test_LOGIN004_header_formato_incorrecto")
@@ -65,7 +63,7 @@ def test_LOGIN004_header_formato_incorrecto():
 
 
 @pytest.mark.functional
-@pytest.mark.regression
+@pytest.mark.negative
 def test_LOGIN005_api_key_vacia_en_header():
     """ Test LOGIN005: Clave vacía en header Authorization """
     logger.info("Iniciando test_LOGIN005_api_key_vacia_en_header")
@@ -75,7 +73,7 @@ def test_LOGIN005_api_key_vacia_en_header():
 
 
 @pytest.mark.functional
-@pytest.mark.regression
+@pytest.mark.negative
 def test_LOGIN006_autenticacion_endpoint_restringido():
     """ Test LOGIN006: Autenticación con endpoint restringido o sin permisos """
     logger.info("Iniciando test_LOGIN006_autenticacion_endpoint_restringido")

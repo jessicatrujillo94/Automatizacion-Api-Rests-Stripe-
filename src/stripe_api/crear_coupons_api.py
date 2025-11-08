@@ -54,7 +54,7 @@ def crear_cupon_sin_token():
 
 def crear_cupon_campos_validos():
     headers = build_headers()
-    payload = {"id": "cupon_basic", "percent_off": 30, "duration": "once"}
+    payload = {"percent_off": 30, "duration": "once"}
     response = StripeAPI(BASE_URL).post(endpoint=ENDPOINT, headers=headers, payload=payload)
     log_request_response(url=f"{BASE_URL}{ENDPOINT}", headers=headers, payload=payload, response=response)
     return response

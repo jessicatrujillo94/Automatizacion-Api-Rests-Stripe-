@@ -10,4 +10,5 @@ test_logs.log
 *.md
 README.md
 __pycache__/
-
+allure-report
+allure-results

@@ -1,4 +1,5 @@
 import pytest
+import allure
 from src.logs.logger import logger
 from src.stripe_api.crear_prices_api import (
     crear_price_campos_minimos,
@@ -44,9 +45,14 @@ from src.assertions.crear_price_assertion import (
     assert_creacion_body_invalido,
 )
 
-
+@allure.epic("EPIC: Gestión de Prices")
+@allure.feature("Feature: Crear Prices")
+@allure.story("HU: HU004-Crear Prices")
+@pytest.mark.smoke
 @pytest.mark.functional
 def test_POSTP001_crear_price_campos_minimos_validos(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("smoke", "functional", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP001_crear_price_campos_minimos_validos")
     respuesta = crear_price_campos_minimos(product_id)
@@ -56,9 +62,11 @@ def test_POSTP001_crear_price_campos_minimos_validos(one_product_id):
     finally:
         eliminar_price(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
 def test_POSTP002_crear_price_todos_campos_opcionales(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP002_crear_price_todos_campos_opcionales")
     respuesta = crear_price_todos_campos(product_id)
@@ -67,79 +75,108 @@ def test_POSTP002_crear_price_todos_campos_opcionales(one_product_id):
     finally:
         eliminar_price(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP003_crear_price_sin_currency(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP003_crear_price_sin_currency")
     respuesta = crear_price_sin_currency(product_id)
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP004_crear_price_sin_unit_amount(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP004_crear_price_sin_unit_amount")
     respuesta = crear_price_sin_unit_amount(product_id)
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP005_crear_price_sin_product():
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     logger.info("Iniciando test_POSTP005_crear_price_sin_product")
     respuesta = crear_price_sin_product()
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP006_crear_price_unit_amount_invalido(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP006_crear_price_unit_amount_invalido")
     respuesta = crear_price_unit_amount_invalido(product_id)
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP007_crear_price_currency_invalido(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP007_crear_price_currency_invalido")
     respuesta = crear_price_currency_invalido(product_id)
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP008_crear_price_token_invalido(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP008_crear_price_token_invalido")
     respuesta = crear_price_token_invalido(product_id)
     assert_creacion_token_invalido(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP009_crear_price_sin_token(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP009_crear_price_sin_token")
     respuesta = crear_price_sin_token(product_id)
     assert_creacion_sin_token(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP010_crear_price_producto_inexistente(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     logger.info("Iniciando test_POSTP010_crear_price_producto_inexistente")
     respuesta = crear_price_producto_inexistente()
     assert_creacion_producto_inexistente(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP011_crear_price_campos_adicionales_no_soportados(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP011_crear_price_campos_adicionales_no_soportados")
     respuesta = crear_price_campos_adicionales(product_id)
     assert_creacion_campos_no_soportados(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
 def test_POSTP012_crear_price_inactivo(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP012_crear_price_inactivo")
     respuesta = crear_price_inactivo(product_id)
@@ -148,17 +185,22 @@ def test_POSTP012_crear_price_inactivo(one_product_id):
     finally:
         eliminar_price(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP013_crear_price_nickname_vacio(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP013_crear_price_nickname_vacio")
     respuesta = crear_price_nickname_vacio(product_id)
     assert_creacion_nombre_vacio(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
 def test_POSTP014_crear_price_metadata_compleja(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP014_crear_price_metadata_compleja")
     respuesta = crear_price_metadata_compleja(product_id)
@@ -167,9 +209,11 @@ def test_POSTP014_crear_price_metadata_compleja(one_product_id):
     finally:
         eliminar_price(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.regression
 def test_POSTP015_crear_multiples_prices_consecutivamente(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("regression", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP015_crear_multiples_prices_consecutivamente")
     respuestas = crear_multiples_prices(product_id)
@@ -179,9 +223,11 @@ def test_POSTP015_crear_multiples_prices_consecutivamente(one_product_id):
         for r in respuestas:
             eliminar_price(r)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.regression
 def test_POSTP016_validar_estructura_respuesta_price(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("regression", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP016_validar_estructura_respuesta_price")
     respuesta = crear_price_respuesta_estructura(product_id)
@@ -190,17 +236,22 @@ def test_POSTP016_validar_estructura_respuesta_price(one_product_id):
     finally:
         eliminar_price(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP017_crear_price_nickname_largo(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP017_crear_price_nickname_largo")
     respuesta = crear_price_nickname_largo(product_id)
     assert_creacion_nombre_largo(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
 def test_POSTP018_crear_price_recurrente_mensual(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP018_crear_price_recurrente_mensual")
     respuesta = crear_price_recurrente_mensual(product_id)
@@ -209,56 +260,77 @@ def test_POSTP018_crear_price_recurrente_mensual(one_product_id):
     finally:
         eliminar_price(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP019_crear_price_recurrente_intervalo_invalido(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP019_crear_price_recurrente_intervalo_invalido")
     respuesta = crear_price_recurrente_intervalo_invalido(product_id)
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP020_crear_price_unit_amount_cero(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP020_crear_price_unit_amount_cero")
     respuesta = crear_price_unit_amount_cero(product_id)
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP021_crear_price_unit_amount_negativo(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP021_crear_price_unit_amount_negativo")
     respuesta = crear_price_unit_amount_negativo(product_id)
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP022_crear_price_unit_amount_grande(one_product_id):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id
     logger.info("Iniciando test_POSTP022_crear_price_unit_amount_grande")
     respuesta = crear_price_unit_amount_grande(product_id)
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP023_crear_price_producto_inactivo(one_product_id_inactive):
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     product_id = one_product_id_inactive
     logger.info("Iniciando test_POSTP023_crear_price_producto_inactivo")
     respuesta = crear_price_producto_inactivo(product_id)
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP024_crear_price_body_vacio():
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     logger.info("Iniciando test_POSTP024_crear_price_body_vacio")
     respuesta = crear_price_body_vacio()
     assert_creacion_fallida(respuesta)
 
-
+@allure.story("HU: HU004-Crear Prices")
 @pytest.mark.functional
+@pytest.mark.negative
 def test_POSTP025_crear_price_body_invalido():
+    allure.dynamic.label("owner", "Jessica Trujillo")
+    allure.dynamic.tag("functional", "negative", "api", "price")
     logger.info("Iniciando test_POSTP025_crear_price_body_invalido")
     respuesta = crear_price_body_invalido()
     assert_creacion_body_invalido(respuesta)
