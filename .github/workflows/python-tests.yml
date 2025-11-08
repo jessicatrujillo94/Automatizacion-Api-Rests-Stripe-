@@ -10,9 +10,13 @@ on:
   push:
     branches:
       - JessicaTrujillo
+      - development
+      - main
   pull_request:
     branches:
       - JessicaTrujillo
+      - development
+      - main
 
 jobs:
   run-tests:
