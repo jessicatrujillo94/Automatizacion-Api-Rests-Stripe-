@@ -18,14 +18,11 @@ jobs:
   run-tests:
     runs-on: ubuntu-latest
     env:
-      TOKEN: ${{ secrets.TOKEN }}
-      TOKEN_INVALID: ${{ secrets.TOKEN_INVALID }}
-      TOKEN_WITHOUT_PERMISSION: ${{ secrets.TOKEN_WITHOUT_PERMISSION }}
-      TOKEN_EXPIRED: ${{ secrets.TOKEN_EXPIRED }}
-      BASE_URL: ${{ secrets.BASE_URL }}
-      ID_WORKSPACE: ${{ secrets.ID_WORKSPACE }}
-      ID_FOLDER: ${{ secrets.ID_FOLDER }}
-      ID_SPACE: ${{ secrets.ID_SPACE }}
+      API_KEY: ${{ secrets.API_KEY }}
+      API_KEY_INVALIDA: ${{ secrets.API_KEY_INVALIDA }}
+      API_KEY_WITHOUT_PERMISSION: ${{ secrets.API_KEY_WITHOUT_PERMISSION }}
+      API_KEY_EXPIRED: ${{ secrets.API_KEY_EXPIRED }}
+      BASE_URL: https://api.stripe.com/v1
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
