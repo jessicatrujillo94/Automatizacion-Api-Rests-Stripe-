@@ -1,12 +1,18 @@
 name: Run Automated Tests
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
     inputs:
       test_mark:
         description: 'Test marker (smoke, functional, regression, all)'
         required: false
         default: 'all'
+  push:
+    branches:
+      - JessicaTrujillo
+  pull_request:
+    branches:
+      - JessicaTrujillo
 
 jobs:
   run-tests:
@@ -48,7 +54,6 @@ jobs:
             pytest --alluredir=allure-results --capture=tee-sys
           else
             pytest -m "$MARK" --alluredir=allure-results --capture=tee-sys
-          fi
 
       - name: Generate Allure report
         run: |
