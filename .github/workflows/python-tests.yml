@@ -1,0 +1,60 @@
+name: Run Automated Tests
+
+on:
+  push:
+    branches:
+      - development
+  pull_request:
+    branches:
+      - development
+  workflow_dispatch: 
+    inputs:
+      test_mark:
+        description: 'Test marker (smoke, functional, regression, all)'
+        required: false
+        default: 'all'
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    env:
+      TOKEN: ${{ secrets.TOKEN }}
+      BASE_URL: ${{ secrets.BASE_URL }}
+      ID_WORKSPACE: ${{ secrets.ID_WORKSPACE }}
+      ID_FOLDER: ${{ secrets.ID_FOLDER }}
+      TOKEN_CADUCADO: ${{ secrets.TOKEN_CADUCADO }}
+      ID_SPACE: ${{ secrets.ID_SPACE}}
+      TOKEN_SIN_PERMISO: ${{ secrets.TOKEN_SIN_PERMISO}}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install allure-pytest
+
+      - name: Run tests and generate Allure results
+        run: |
+          MARK="${{ github.event.inputs.test_mark || 'all' }}"
+          if [ "$MARK" = "all" ]; then
+            pytest --alluredir=allure-results --capture=tee-sys
+          else
+            pytest -m "$MARK" --alluredir=allure-results --capture=tee-sys
+          fi
+
+      - name: Generate Allure report
+        run: |
+          allure generate allure-results --clean -o allure-report
+
+      - name: Upload Allure report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
