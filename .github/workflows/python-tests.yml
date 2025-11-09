@@ -12,11 +12,19 @@ on:
       - JessicaTrujillo
       - development
       - main
+    paths:
+      - 'tests/**'
+      - 'src/**'
+      - 'requirements.txt'
   pull_request:
     branches:
       - JessicaTrujillo
       - development
       - main
+    paths:
+      - 'tests/**'
+      - 'src/**'
+      - 'requirements.txt'
 
 concurrency:
   group: allure-report
@@ -53,19 +61,22 @@ jobs:
           sudo apt-get install -y unzip wget
           wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.zip -O /tmp/allure.zip
           sudo unzip /tmp/allure.zip -d /opt/
-          sudo ln -s /opt/allure-2.27.0/bin/allure /usr/bin/allure
+          sudo ln -sf /opt/allure-2.27.0/bin/allure /usr/bin/allure
           allure --version
 
       - name: Run tests and generate Allure results
+        shell: bash
         run: |
           MARK="${{ github.event.inputs.test_mark }}"
           if [ -z "$MARK" ]; then
             MARK="all"
           fi
+          echo "Running tests with marker: $MARK"
           if [ "$MARK" = "all" ]; then
             pytest --alluredir=allure-results --capture=tee-sys
           else
             pytest -m "$MARK" --alluredir=allure-results --capture=tee-sys
+          fi
 
       - name: Generate Allure report
         run: |
@@ -99,10 +110,10 @@ jobs:
           grep -rl "sk_test_" allure-report | xargs rm -f || true
 
       - name: Upload Allure report to GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: allure-report
+          path: ./allure-report
 
       - name: Deploy Allure report to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
