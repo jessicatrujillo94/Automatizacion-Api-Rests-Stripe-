@@ -107,15 +107,20 @@ jobs:
           path: allure-report
 
       - name: Sanitize Allure report
-        shell: bash
         run: |
           grep -rl "sk_test_" allure-report | xargs rm -f || true
 
       - name: Upload Allure report to GitHub Pages
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./allure-report
 
       - name: Deploy Allure report to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
+
+      - name: Show page URL
+        run: echo "Allure report deployed at: $PAGE_URL"
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+
