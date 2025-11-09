@@ -12,19 +12,11 @@ on:
       - JessicaTrujillo
       - development
       - main
-    paths:
-      - 'tests/**'
-      - 'src/**'
-      - 'requirements.txt'
   pull_request:
     branches:
       - JessicaTrujillo
       - development
       - main
-    paths:
-      - 'tests/**'
-      - 'src/**'
-      - 'requirements.txt'
 
 concurrency:
   group: allure-report
@@ -67,15 +59,11 @@ jobs:
       - name: Run tests and generate Allure results
         run: |
           MARK="${{ github.event.inputs.test_mark }}"
-          if [ -z "$MARK" ]; then
-            MARK="all"
-          fi
-
+          if [ -z "$MARK" ]; then MARK="all"; fi
           if [ "$MARK" = "all" ]; then
             pytest --alluredir=allure-results --capture=tee-sys
           else
             pytest -m "$MARK" --alluredir=allure-results --capture=tee-sys
-          fi
 
       - name: Generate Allure report
         run: |
