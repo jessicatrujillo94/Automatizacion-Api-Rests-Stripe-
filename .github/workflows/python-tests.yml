@@ -114,4 +114,4 @@ jobs:
         uses: actions/deploy-pages@v1
 
       - name: Show page URL
-        run: echo "Allure report deployed at: ${{ steps.deployment.outputs.page_url }}"
+        run: echo "Allure report deployed to GitHub Pages. Check the gh-pages branch or your repository Pages settings for the URL."
