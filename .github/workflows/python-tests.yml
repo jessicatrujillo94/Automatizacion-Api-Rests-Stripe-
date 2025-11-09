@@ -12,11 +12,23 @@ on:
       - JessicaTrujillo
       - development
       - main
+    paths:
+      - 'tests/**'
+      - 'src/**'
+      - 'requirements.txt'
   pull_request:
     branches:
       - JessicaTrujillo
       - development
       - main
+    paths:
+      - 'tests/**'
+      - 'src/**'
+      - 'requirements.txt'
+
+concurrency:
+  group: allure-report
+  cancel-in-progress: true
 
 jobs:
   run-tests:
