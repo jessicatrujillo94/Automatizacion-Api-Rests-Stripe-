@@ -110,5 +110,7 @@ jobs:
           path: allure-report
 
       - name: Deploy Allure report to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v1
+
+      - name: Show deployment info
+        run: echo "Allure report deployed. Check your repository GitHub Pages settings for the URL."
