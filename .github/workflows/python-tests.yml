@@ -117,3 +117,5 @@ jobs:
 
       - name: Show page URL
         run: echo "Allure report deployed at: ${{ steps.deployment.outputs.page_url }}"
+
+# workflow actualizado para publicar Allure correctamente
