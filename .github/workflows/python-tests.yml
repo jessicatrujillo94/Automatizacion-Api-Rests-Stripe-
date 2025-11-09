@@ -67,9 +67,7 @@ jobs:
       - name: Run tests and generate Allure results
         run: |
           MARK="${{ github.event.inputs.test_mark }}"
-          if [ -z "$MARK" ]; then
-            MARK="all"
-          fi
+          if [ -z "$MARK" ]; then MARK="all"; fi
           if [ "$MARK" = "all" ]; then
             pytest --alluredir=allure-results --capture=tee-sys
           else
@@ -107,15 +105,13 @@ jobs:
           grep -rl "sk_test_" allure-report | xargs rm -f || true
 
       - name: Upload Allure report to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v1
         with:
-          path: ./allure-report
+          path: allure-report
 
       - name: Deploy Allure report to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v1
 
       - name: Show page URL
         run: echo "Allure report deployed at: ${{ steps.deployment.outputs.page_url }}"
-
-# workflow actualizado para publicar Allure correctamente
