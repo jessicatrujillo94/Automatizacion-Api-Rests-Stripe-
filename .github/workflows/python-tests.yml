@@ -106,10 +106,7 @@ jobs:
         run: |
           grep -rl "sk_test_" allure-report | xargs rm -f || true
 
-      - name: List files before deploy
-        run: ls -R allure-report
-
-      - name: Upload Allure report artifact
+      - name: Upload Allure report to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./allure-report
