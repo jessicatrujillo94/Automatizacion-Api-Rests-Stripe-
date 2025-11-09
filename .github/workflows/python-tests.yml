@@ -61,7 +61,7 @@ jobs:
           sudo apt-get install -y unzip wget
           wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.zip -O /tmp/allure.zip
           sudo unzip /tmp/allure.zip -d /opt/
-          sudo ln -s /opt/allure-2.27.0/bin/allure /usr/bin/allure
+          sudo ln -sf /opt/allure-2.27.0/bin/allure /usr/bin/allure
           allure --version
 
       - name: Run tests and generate Allure results
@@ -107,10 +107,10 @@ jobs:
           grep -rl "sk_test_" allure-report | xargs rm -f || true
 
       - name: Upload Allure report to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v1
         with:
           path: ./allure-report
 
       - name: Deploy Allure report to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v1
