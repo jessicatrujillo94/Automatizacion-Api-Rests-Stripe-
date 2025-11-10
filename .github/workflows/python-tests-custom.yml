@@ -57,6 +57,7 @@ jobs:
             pytest --alluredir=allure-results --capture=tee-sys --color=no
           else
             pytest -m "$MARK" --alluredir=allure-results --capture=tee-sys --color=no
+          fi
 
       - name: Generate Allure report
         run: |
