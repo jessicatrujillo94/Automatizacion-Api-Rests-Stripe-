@@ -1,12 +1,15 @@
 name: Tests Custom
 
 on:
+  push:
+      branches:
+        - JessicaTrujillo
   workflow_dispatch:
     inputs:
       test_mark:
         description: 'Test marker (negative, functional, regression, smoke, all)'
         required: false
-        default: 'all'
+        default: 'negative'
 
 concurrency:
   group: allure-report
