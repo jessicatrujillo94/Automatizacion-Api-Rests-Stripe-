@@ -101,5 +101,8 @@ jobs:
 
       - name: Show page URL
         run: |
-          echo "Allure report deployed at: ${{ steps.deployment.outputs.page_url || 'Not available yet' }}"
-
+          if [ -z "${{ steps.deployment.outputs.page_url }}" ]; then
+            echo "Allure report URL not available yet"
+          else
+            echo "Allure report deployed at: ${{ steps.deployment.outputs.page_url }}"
+          fi
