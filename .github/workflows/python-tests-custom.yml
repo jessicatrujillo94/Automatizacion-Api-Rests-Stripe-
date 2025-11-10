@@ -47,7 +47,7 @@ jobs:
           allure --version
 
       - name: Clean old Allure reports
-        run: rm -rf allure-report
+        run: rm -rf allure-report allure-results
 
       - name: Run tests and generate Allure results
         run: |
@@ -61,6 +61,7 @@ jobs:
 
       - name: Generate Allure report
         run: |
+          sleep 2
           allure generate allure-results --clean -o allure-report
           grep -rl "sk_test_" allure-report | xargs rm -f || true
           ls -la allure-report
@@ -99,7 +100,4 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Show page URL
-        env:
-          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: |
-          echo "Allure report deployed at: $PAGE_URL"
+        run: echo "Allure report deployed at: ${{ steps.deployment.outputs.page_url }}"
