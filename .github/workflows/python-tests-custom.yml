@@ -101,4 +101,5 @@ jobs:
       - name: Show page URL
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
-        run: echo "Allure report deployed at: $PAGE_URL"
+        run: |
+          echo "Allure report deployed at: $PAGE_URL"
