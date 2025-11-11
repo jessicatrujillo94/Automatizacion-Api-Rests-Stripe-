@@ -3,54 +3,37 @@ name: Run Custom Tests
 on:
   push:
     branches:
+      - main
       - JessicaTrujillo
   workflow_dispatch:
     inputs:
-      test_type:
-        description: 'Test type: total | api | ui | login'
+      logLevel:
+        description: 'Log level'
         required: true
-        default: 'total'
-      marker:
-        description: 'Optional marker or suite (e.g. @smoke, @regression)'
+        default: 'warning'
+        type: choice
+        options:
+        - info
+        - warning
+        - debug
+      tags:
+        description: 'Test scenario tags'
         required: false
-        default: ''
+        type: boolean
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true
 
 jobs:
-  run-tests:
+  log-the-inputs:
     runs-on: ubuntu-latest
-    env:
-      API_KEY: ${{ secrets.API_KEY }}
-      API_KEY_INVALIDA: ${{ secrets.API_KEY_INVALIDA }}
-      API_KEY_WITHOUT_PERMISSION: ${{ secrets.API_KEY_WITHOUT_PERMISSION }}
-      API_KEY_EXPIRED: ${{ secrets.API_KEY_EXPIRED }}
-      BASE_URL: https://api.stripe.com/v1
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install allure-pytest
-
-      - name: Run tests
-        run: |
-          TYPE="${{ github.event.inputs.test_type }}"
-          MARKER="${{ github.event.inputs.marker }}"
-          echo "Running test type: $TYPE"
-          echo "Marker: $MARKER"
-
-          if [ "$TYPE" = "total" ]; then
-            pytest --alluredir=allure-results
-          elif [ -n "$MARKER" ]; then
-            pytest tests/api_stripe/Products/test_crear_product.py -m "$MARKER" --alluredir=allure-results
-          else
-            pytest tests/api_stripe/Products/test_crear_product.py -m "$TYPE" --alluredir=allure-results
-          fi
-
+      - run: |
+          echo "Log level: $LEVEL"
+          echo "Tags: $TAGS"
+          echo "Environment: $ENVIRONMENT"
+        env:
+          LEVEL: ${{ inputs.logLevel }}
+          TAGS: ${{ inputs.tags }}
+          ENVIRONMENT: ${{ inputs.environment }}
