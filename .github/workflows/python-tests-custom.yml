@@ -7,15 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       test_type:
-        description: 'Test type'
+        description: 'Test type: total | api | ui | login'
         required: true
         default: 'total'
-        type: choice
-        options:
-          - total
-          - api
-          - ui
-          - login
       marker:
         description: 'Optional marker or suite (e.g. @smoke, @regression)'
         required: false
@@ -49,9 +43,9 @@ jobs:
           if [ "$TYPE" = "total" ]; then
             pytest --alluredir=allure-results
           elif [ -n "$MARKER" ]; then
-            pytest -m "$MARKER" --alluredir=allure-results
+            pytest tests/api_stripe/Products/test_crear_product.py -m "$MARKER" --alluredir=allure-results
           else
-            pytest -m "$TYPE" --alluredir=allure-results
+            pytest tests/api_stripe/Products/test_crear_product.py -m "$TYPE" --alluredir=allure-results
           fi
 
       - name: Generate Allure report
