@@ -1,6 +1,9 @@
 name: Run Custom Tests
 
 on:
+  push:
+    branches:
+      - JessicaTrujillo
   workflow_dispatch:
     inputs:
       test_type:
