@@ -54,23 +54,28 @@ jobs:
           fi
 
           if [ "$MARK" = "all" ]; then
-            pytest ./tests/api_stripe/Products/test_crear_product.py --alluredir=allure-results --capture=tee-sys
+            pytest ./tests/api_stripe/Products/test_crear_product.py --alluredir=allure-results --log-cli-level=INFO --capture=tee-sys --color=no
           else
-            pytest ./tests/api_stripe/Products/test_crear_product.py -m "$MARK" --alluredir=allure-results --capture=tee-sys
+            pytest ./tests/api_stripe/Products/test_crear_product.py -m "$MARK" --alluredir=allure-results --log-cli-level=INFO --capture=tee-sys --color=no
           fi
 
-      - name: Generate Allure report
-        shell: bash
+      - name: Generate Allure report with timestamp
+        id: report
         run: |
-          allure generate allure-results --clean -o allure-report
-          grep -rl "sk_test_" allure-report | xargs rm -f || true
-          ls -la allure-report
+          TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+          REPORT_DIR="allure-report-${TIMESTAMP}"
+          mkdir -p "$REPORT_DIR"
+          allure generate allure-results --clean -o "$REPORT_DIR"
+          grep -rl "sk_test_" "$REPORT_DIR" | xargs rm -f || true
+          echo "REPORT_DIR=$REPORT_DIR" >> $GITHUB_ENV
+          echo "Generated report: $REPORT_DIR"
+          ls -la "$REPORT_DIR"
 
       - name: Upload Allure report artifact
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
-          path: allure-report
+          path: ${{ env.REPORT_DIR }}
 
   deploy-report:
     needs: run-tests
@@ -85,11 +90,24 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: allure-report
-          path: allure-report
+          path: ./reports
+
+      - name: Prepare deployment folder
+        run: |
+          mkdir -p ./allure-report
+          if [ -d "./reports/allure-report-"* ]; then
+            LATEST_DIR=$(ls -td ./reports/allure-report-* | head -n 1)
+            echo "Using timestamped report: $LATEST_DIR"
+            cp -r "$LATEST_DIR"/* ./allure-report/
+          else
+            echo "No timestamp folder found, copying directly"
+            cp -r ./reports/* ./allure-report/
+          fi
+          ls -la ./allure-report
 
       - name: Sanitize Allure report
         run: |
-          grep -rl "sk_test_" allure-report | xargs rm -f || true
+          grep -rl "sk_test_" ./allure-report | xargs rm -f || true
 
       - name: Upload Allure report to GitHub Pages
         uses: actions/upload-pages-artifact@v3
