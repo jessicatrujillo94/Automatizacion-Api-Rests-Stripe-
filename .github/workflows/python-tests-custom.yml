@@ -18,7 +18,15 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-
+    env:
+      TOKEN: ${{ secrets.TOKEN }}
+      BASE_URL: ${{ secrets.BASE_URL }}
+      ID_WORKSPACE: ${{ secrets.ID_WORKSPACE }}
+      ID_FOLDER: ${{ secrets.ID_FOLDER }}
+      TOKEN_CADUCADO: ${{ secrets.TOKEN_CADUCADO }}
+      ID_SPACE: ${{ secrets.ID_SPACE }}
+      TOKEN_SIN_PERMISO: ${{ secrets.TOKEN_SIN_PERMISO }}
+      
     steps:
       - name: Checkout
         uses: actions/checkout@v4
