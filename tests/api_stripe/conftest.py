@@ -23,6 +23,19 @@ TOKEN_CADUCADO = os.getenv("API_KEY_EXPIRED")
 TOKEN_INVALIDO = os.getenv("API_KEY_INVALIDA")
 TOKEN_SIN_PERMISO = os.getenv("TOKEN_SIN_PERMISO")
 
+@pytest.fixture(autouse=True)
+def attach_logs_after_test():
+    yield
+    try:
+        with open("test_logs.log", "r", encoding="utf-8") as f:
+            allure.attach(
+                f.read(),
+                name="Execution Log",
+                attachment_type=allure.attachment_type.TEXT
+            )
+    except FileNotFoundError:
+        pass
+
 @pytest.fixture
 def producto_creado():
     """
