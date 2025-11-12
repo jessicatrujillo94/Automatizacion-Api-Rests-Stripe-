@@ -54,9 +54,9 @@ jobs:
           fi
 
           if [ "$MARK" = "all" ]; then
-            pytest ./tests/api_stripe/Products/test_crear_product.py --alluredir=allure-results --log-cli-level=INFO --capture=tee-sys --color=no
+            pytest ./tests --alluredir=allure-results --log-cli-level=INFO --capture=tee-sys --color=no
           else
-            pytest ./tests/api_stripe/Products/test_crear_product.py -m "$MARK" --alluredir=allure-results --log-cli-level=INFO --capture=tee-sys --color=no
+            pytest ./tests -m "$MARK" --alluredir=allure-results --log-cli-level=INFO --capture=tee-sys --color=no
           fi
 
       - name: Generate Allure report with timestamp
