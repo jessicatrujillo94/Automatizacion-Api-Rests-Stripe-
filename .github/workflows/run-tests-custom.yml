@@ -1,0 +1,125 @@
+name: Run Automated Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_mark:
+        description: 'Test marker (smoke, functional, regression, all)'
+        required: false
+        default: 'all'
+
+concurrency:
+  group: allure-report
+  cancel-in-progress: true
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
+      API_KEY_INVALIDA: ${{ secrets.API_KEY_INVALIDA }}
+      API_KEY_WITHOUT_PERMISSION: ${{ secrets.API_KEY_WITHOUT_PERMISSION }}
+      API_KEY_EXPIRED: ${{ secrets.API_KEY_EXPIRED }}
+      BASE_URL: https://api.stripe.com/v1
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install allure-pytest
+
+      - name: Install Allure Commandline
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip wget
+          wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.zip -O /tmp/allure.zip
+          sudo unzip /tmp/allure.zip -d /opt/
+          sudo ln -s /opt/allure-2.27.0/bin/allure /usr/bin/allure
+          allure --version
+
+      - name: Run tests and generate Allure results
+        run: |
+          MARK="${{ github.event.inputs.test_mark }}"
+          if [ -z "$MARK" ]; then
+            MARK="all"
+          fi
+
+          if [ "$MARK" = "all" ]; then
+            pytest ./tests --alluredir=allure-results --log-cli-level=INFO --capture=tee-sys --color=no
+          else
+            pytest ./tests -m "$MARK" --alluredir=allure-results --log-cli-level=INFO --capture=tee-sys --color=no
+          fi
+
+      - name: Generate Allure report with timestamp
+        id: report
+        run: |
+          TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
+          REPORT_DIR="allure-report-${TIMESTAMP}"
+          mkdir -p "$REPORT_DIR"
+          allure generate allure-results --clean -o "$REPORT_DIR"
+          grep -rl "sk_test_" "$REPORT_DIR" | xargs rm -f || true
+          echo "REPORT_DIR=$REPORT_DIR" >> $GITHUB_ENV
+          echo "Generated report: $REPORT_DIR"
+          ls -la "$REPORT_DIR"
+
+      - name: Upload Allure report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: ${{ env.REPORT_DIR }}
+
+  deploy-report:
+    needs: run-tests
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+    steps:
+      - name: Download Allure report artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-report
+          path: ./reports
+
+      - name: Prepare deployment folder
+        run: |
+          mkdir -p ./allure-report
+          if [ -d "./reports/allure-report-"* ]; then
+            LATEST_DIR=$(ls -td ./reports/allure-report-* | head -n 1)
+            echo "Using timestamped report: $LATEST_DIR"
+            cp -r "$LATEST_DIR"/* ./allure-report/
+          else
+            echo "No timestamp folder found, copying directly"
+            cp -r ./reports/* ./allure-report/
+          fi
+          ls -la ./allure-report
+
+      - name: Sanitize Allure report
+        run: |
+          grep -rl "sk_test_" ./allure-report | xargs rm -f || true
+
+      - name: Upload Allure report to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./allure-report
+
+      - name: Deploy Allure report to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Show page URL
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          echo "Allure report deployed at: $PAGE_URL"
