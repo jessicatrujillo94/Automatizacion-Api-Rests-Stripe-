@@ -1,81 +1,92 @@
-# API Stripe Tests
+# DIPLOMADO INGENIERÍA DE CALIDAD DE SOFTWARE COMERCIAL (3ra Edición)
+## CARRERA DE INGENIERÍA SISTEMAS
+API Stripe Test
+---
+Proyecto de automatización de pruebas sobre la API de Stripe, desarrollado en Python + pytest, con soporte para Allure Reports y ejecución en pipelines CI/CD.
+### Requisitos
+Se necesita una versión de Python >= 3.10
+pip instalado
+### Instalación
+1. Clona el repositorio:  
+```bash
+git clone https://github.com/jessicatrujillo94/Automatizacion-Api-Rests-Stripe-.git
+```
+2. Crea y activa un entorno virtual:  
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+3. Instala dependencias:  
+```bash
+pip install -r requirements.txt
+```
+---
+### Ejecucion de Test
+El proyecto está configurado con **Python y Pytest Projects** para API Rest:
+> Comandos principales
+Comando	Descripción
 
-Automated tests for the Stripe API, organized by product type and functionality.
-
-## Folder Structure
-
-tests/
-└── api_stripe/
-├── Authentication/
-│ └── auth.py
-├── conftest.py
-└── Products/
-├── coupons/
-│ ├── test_actualizar_coupon.py
-│ ├── test_crear_coupon.py
-│ ├── test_eliminar_coupon.py
-│ ├── test_listar_coupon.py
-│ └── test_obtener_coupon.py
-├── Price/
-│ ├── test_buscar_precios.py
-│ ├── test_crear_price.py
-│ ├── test_obtener_price.py
-│ └── test_update_price.py
-├── promocional_code/
-│ ├── test_actualizar_promocional_code.py
-│ ├── test_crear_promocional_code.py
-│ ├── test_listar_promocional_code.py
-│ └── test_obtener_promocional_code.py
-├── tax_code/
-│ ├── test_detalle_tax_code.py
-│ └── test_listar_tax_code.py
-├── tax_rate/
-│ ├── test_actualizar_tax_rate.py
-│ ├── test_crear_tax_rate.py
-│ ├── test_listar_tax_rate.py
-│ └── test_obtener_tax_rate.py
-├── test_actualizar_product.py
-├── test_crear_product.py
-├── test_e2e_product.py
-├── test_eliminar_product.py
-└── test_obtener_product.py
-
-
-## Test Categories
-
-### Authentication
-- `auth.py`: Tests for authentication mechanisms, token validation, and error handling.
-
-### Coupons
-- CRUD operations: create, list, update, delete, and retrieve coupons.
-
-### Price
-- Operations on product prices: creation, updating, retrieving, and searching.
-
-### Promotional Code
-- CRUD operations and listing of promotion codes.
-
-### Tax Code
-- Listing and retrieving tax codes.
-
-### Tax Rate
-- Creation, updating, listing, and retrieving tax rates.
-
-### Products
-- CRUD operations for products, including end-to-end (`e2e`) tests.
+| Comando | Descripción |
+|---------|-------------|
+| `pytest -v` | Ejecuta **todos los tests** |
+| `pytest -m smoke` | Ejecuta tests marcados con @pytest.mark.smoke **API**(`tests/api/**/*.spec.ts`) |
+| `pytest -m regression` | Ejecuta tests marcados con @pytest.mark.regression **API**(`tests/api/**/*.spec.ts`) |
+| `pytest -m functional ` |Ejecuta tests marcados con @pytest.mark.functional **API**(`tests/api/**/*.spec.ts`) |
 
 ---
+### Reportes Allure
 
-## Running Tests
-
-Use `pytest` to run the tests. Examples:
-
+1. Allure:  
 ```bash
-# Run all tests
-pytest tests/api_stripe/
+pytest --alluredir=allure-results
+allure serve allure-results
+```
+2. Reporte General
+```bash
+pytest -m smoke --alluredir=allure-results
+ allure serve allure-results
+```
+3. Reporte Smoke
+```bash
+pytest -m smoke --alluredir=allure-results
+ allure serve allure-results
+```
+4. Reporte Regression
+```bash
+pytest -m regression --alluredir=allure-results
+ allure serve allure-results
+```
+5. Reporte Functional
+```bash
+pytest -m functional --alluredir=allure-results
+ allure serve allure-results
+```
 
-# Run tests for a specific folder
-pytest tests/api_stripe/Products/tax_rate/
-
-# Run a specific test function
-pytest tests/api_stripe/Products/tax_rate/test_crear_tax_rate.py::test_TAXRPOST001_crear_tax_rate_campos_obligatorios
+### Estructura relevante
+```
+Stripe/
+│
+├── src/                     # "Código fuente del framework QA"
+│   ├── assertions/          # "Funciones y validaciones personalizadas"
+│   ├── logs/                # "Logs generados durante las ejecuciones"
+│   ├── payloads/            # "Cuerpos JSON usados en los tests"
+│   ├── resources/           # "Datos externos, utilidades y archivos base"
+│   ├── schemas/             # "Esquemas para validación de respuestas"
+│   ├── services/            # "Lógica de servicios (peticiones HTTP)"
+│   └── stripe_api/          # "Integraciones específicas con la API de Stripe"
+│
+├── tests/                   # "Casos de prueba organizados por módulos"
+├── venv/                    # "Entorno virtual local"
+├── .env                     # "Variables de entorno (API keys, tokens)"
+├── README.md                # "Documentación principal del proyecto"
+├── requirements.txt         # "Dependencias necesarias para ejecutar el proyecto"
+```
+### Configuracion .env
+```ini
+# Environment variables for STRIPE API access
+BASE_URL=https://api.stripe.com/v1/
+API_KEY=sk_test_xxx_NO_SUBIR
+API_KEY_INVALIDA=asdasdasd
+API_KEY_EXPIRED=ASDASDASDASD
+API_KEY_WITHOUT_PERMISSION=ASDASDASDASD
+```
