@@ -49,27 +49,57 @@ jobs:
       - name: Run tests and generate Allure results
         run: |
           MARK="${{ github.event.inputs.test_mark }}"
-          if [ -z "$MARK" ]; then
-            MARK="all"
-          fi
+          if [ -z "$MARK" ]; then MARK="all"; fi
 
           if [ "$MARK" = "all" ]; then
-            pytest ./tests --alluredir=allure-results --log-cli-level=INFO --capture=tee-sys --color=no
+            pytest \
+              ./tests \
+              --alluredir=allure-results \
+              --log-cli-level=INFO \
+              --capture=tee-sys \
+              --color=no
           else
-            pytest ./tests -m "$MARK" --alluredir=allure-results --log-cli-level=INFO --capture=tee-sys --color=no
+            pytest \
+              ./tests \
+              -m "$MARK" \
+              --alluredir=allure-results \
+              --log-cli-level=INFO \
+              --capture=tee-sys \
+              --color=no
           fi
+          
+      - name: Add Allure executor info
+        run: |
+          mkdir -p allure-results
+          cat <<EOF > allure-results/executor.json
+          {
+            "name": "GitHub Actions",
+            "type": "github",
+            "buildName": "Run #${{ github.run_number }}",
+            "buildUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            "reportName": "Allure Report",
+            "reportUrl": "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/",
+            "executor": "GitHub Runner"
+          }
+          EOF    
 
       - name: Generate Allure report with timestamp
         id: report
         run: |
           TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
           REPORT_DIR="allure-report-${TIMESTAMP}"
-          mkdir -p "$REPORT_DIR"
           allure generate allure-results --clean -o "$REPORT_DIR"
-          grep -rl "sk_test_" "$REPORT_DIR" | xargs rm -f || true
+
+          # Mask secrets safely
+          grep -rl "sk_test_" "$REPORT_DIR" | xargs sed -i 's/sk_test_[A-Za-z0-9_]*/[HIDDEN]/g' || true
+
           echo "REPORT_DIR=$REPORT_DIR" >> $GITHUB_ENV
-          echo "Generated report: $REPORT_DIR"
-          ls -la "$REPORT_DIR"
+
+      - name: Upload Allure raw results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
 
       - name: Upload Allure report artifact
         uses: actions/upload-artifact@v4
@@ -85,6 +115,7 @@ jobs:
       id-token: write
     environment:
       name: github-pages
+
     steps:
       - name: Download Allure report artifact
         uses: actions/download-artifact@v4
@@ -92,22 +123,23 @@ jobs:
           name: allure-report
           path: ./reports
 
+      - name: Detect Allure folder
+        run: |
+          # Try to find timestamped folder
+          FOLDER=$(find reports -maxdepth 1 -type d -name "allure-report-*")
+
+          if [ -n "$FOLDER" ]; then
+            echo "Using timestamp folder: $FOLDER"
+            echo "LATEST_DIR=$FOLDER" >> $GITHUB_ENV
+          else
+            echo "Using direct report files inside reports/"
+            echo "LATEST_DIR=reports" >> $GITHUB_ENV
+          fi
+
       - name: Prepare deployment folder
         run: |
           mkdir -p ./allure-report
-          if [ -d "./reports/allure-report-"* ]; then
-            LATEST_DIR=$(ls -td ./reports/allure-report-* | head -n 1)
-            echo "Using timestamped report: $LATEST_DIR"
-            cp -r "$LATEST_DIR"/* ./allure-report/
-          else
-            echo "No timestamp folder found, copying directly"
-            cp -r ./reports/* ./allure-report/
-          fi
-          ls -la ./allure-report
-
-      - name: Sanitize Allure report
-        run: |
-          grep -rl "sk_test_" ./allure-report | xargs rm -f || true
+          cp -r "$LATEST_DIR"/* ./allure-report/
 
       - name: Upload Allure report to GitHub Pages
         uses: actions/upload-pages-artifact@v3
@@ -119,7 +151,5 @@ jobs:
         uses: actions/deploy-pages@v4
 
       - name: Show page URL
-        env:
-          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
-          echo "Allure report deployed at: $PAGE_URL"
+          echo "Report URL: ${{ steps.deployment.outputs.page_url }}"
