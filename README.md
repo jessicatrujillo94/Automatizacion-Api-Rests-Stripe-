@@ -29,9 +29,9 @@ Comando	Descripción
 | Comando | Descripción |
 |---------|-------------|
 | `pytest -v` | Ejecuta **todos los tests** |
-| `pytest -m smoke` | Ejecuta tests marcados con @pytest.mark.smoke **API**(`tests/api/**/*.spec.ts`) |
-| `pytest -m regression` | Ejecuta tests marcados con @pytest.mark.regression **API**(`tests/api/**/*.spec.ts`) |
-| `pytest -m functional ` |Ejecuta tests marcados con @pytest.mark.functional **API**(`tests/api/**/*.spec.ts`) |
+| `pytest -m smoke` | Ejecuta tests marcados con @pytest.mark.smoke **API**(`tests/**/*.py`) |
+| `pytest -m regression` | Ejecuta tests marcados con @pytest.mark.regression **API**(`tests/**/*.py`) |
+| `pytest -m functional ` |Ejecuta tests marcados con @pytest.mark.functional **API**(`tests/**/*.py`) |
 
 ---
 ### Reportes Allure
@@ -68,7 +68,6 @@ Stripe/
 │
 ├── src/                     # "Código fuente del framework QA"
 │   ├── assertions/          # "Funciones y validaciones personalizadas"
-│   ├── logs/                # "Logs generados durante las ejecuciones"
 │   ├── payloads/            # "Cuerpos JSON usados en los tests"
 │   ├── resources/           # "Datos externos, utilidades y archivos base"
 │   ├── schemas/             # "Esquemas para validación de respuestas"
@@ -76,6 +75,7 @@ Stripe/
 │   └── stripe_api/          # "Integraciones específicas con la API de Stripe"
 │
 ├── tests/                   # "Casos de prueba organizados por módulos"
+ └── conftest/               # "Manejar autenticación y limpiar datos antes "
 ├── venv/                    # "Entorno virtual local"
 ├── .env                     # "Variables de entorno (API keys, tokens)"
 ├── README.md                # "Documentación principal del proyecto"
